@@ -110,6 +110,19 @@ nav {
 .nav-links a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
 .nav-links a:hover { color: var(--text); }
 .author { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); letter-spacing: 0.1em; }
+.nav-toggle {
+  display: none; background: none; border: 0; cursor: pointer;
+  width: 36px; height: 30px; padding: 6px 4px;
+  flex-direction: column; justify-content: space-between;
+}
+.nav-toggle span {
+  display: block; height: 2px; width: 100%; background: var(--text);
+  transition: transform 0.25s ease, opacity 0.2s ease;
+}
+body.nav-open { overflow: hidden; }
+.nav-open .nav-toggle span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-open .nav-toggle span:nth-child(2) { opacity: 0; }
+.nav-open .nav-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ─── HERO (cinematic full-bleed) ─── */
 .hero {
@@ -598,7 +611,20 @@ footer {
 }
 @media (max-width: 640px) {
   nav { padding: 0.85rem 1rem; }
-  .nav-links { display: none; }
+  .author { display: none; }
+  .nav-toggle { display: flex; }
+  .nav-links {
+    position: fixed; inset: 0; z-index: 90;
+    flex-direction: column; align-items: center; justify-content: center;
+    gap: 1.5rem;
+    background: rgba(9, 8, 7, 0.98);
+    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+    font-size: 1.6rem; letter-spacing: 0.08em;
+    opacity: 0; pointer-events: none; transform: translateY(-10px);
+    transition: opacity 0.28s ease, transform 0.28s ease;
+  }
+  .nav-links a { color: var(--text); font-family: var(--display); }
+  .nav-open .nav-links { opacity: 1; pointer-events: auto; transform: none; }
   section { padding: 4.5rem 1.25rem; }
   .hero { padding: 6rem 1.25rem 2.5rem; min-height: 94vh; }
   .hero-photo { width: 105vw; }
@@ -708,7 +734,7 @@ footer {
     <span class="mark">PROJECT WEMBY</span>
     <span class="status"><span class="dot"></span> System Online</span>
   </div>
-  <div class="nav-links">
+  <div class="nav-links" id="nav-links-menu">
     <a href="#intel">Intel</a>
     <a href="#signals">Signals</a>
     <a href="#generator">Co-Pilot</a>
@@ -716,6 +742,9 @@ footer {
     <a href="#about">About</a>
   </div>
   <div class="author" id="nav-author">BY M. OPPENHEIM</div>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="nav-links-menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <!-- ─── HERO ─── -->
@@ -1063,6 +1092,25 @@ footer {
     document.getElementById("nav-author").textContent = "BY " + initialsLast.toUpperCase();
   }
   setContact();
+
+  /* ── Mobile nav (hamburger → overlay) ── */
+  var navToggle = document.getElementById("nav-toggle");
+  if (navToggle) {
+    var setNav = function (open) {
+      document.body.classList.toggle("nav-open", open);
+      navToggle.setAttribute("aria-expanded", open ? "true" : "false");
+      navToggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    };
+    navToggle.addEventListener("click", function () {
+      setNav(!document.body.classList.contains("nav-open"));
+    });
+    document.querySelectorAll("#nav-links-menu a").forEach(function (a) {
+      a.addEventListener("click", function () { setNav(false); });
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" || e.keyCode === 27) setNav(false);
+    });
+  }
 
   /* ── Hero staggered reveal ── */
   requestAnimationFrame(function () {
