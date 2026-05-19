@@ -3,31 +3,38 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Project Wemby — A Nike AI Marketing Intelligence Showcase</title>
+<title>Project Wemby — A Nike AI Marketing System</title>
+<meta name="description" content="An interactive marketing system showing how Nike activates Victor Wembanyama with AI — a live cultural signal engine and a working campaign co-pilot." />
+<meta name="robots" content="index,follow" />
+<meta property="og:title" content="Project Wemby — A Nike AI Marketing System" />
+<meta property="og:description" content="A live cultural signal engine and a working AI campaign co-pilot for Victor Wembanyama." />
+<meta property="og:type" content="website" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0A0A0A;
-  --bg-2: #111111;
-  --surface: #161616;
-  --border: rgba(255,255,255,0.08);
-  --border-2: rgba(255,255,255,0.16);
-  --text: #F5F5F0;
-  --muted: #8A8A85;
-  --accent: #FF6B1A;       /* the orange from the hero image */
+  --bg: #090807;
+  --bg-2: #100E0C;
+  --surface: #161310;
+  --surface-2: #1C1815;
+  --border: rgba(255,255,255,0.07);
+  --border-2: rgba(255,255,255,0.15);
+  --text: #F6F4EF;
+  --muted: #8C857B;
+  --muted-2: #5A554D;
+  --accent: #FF6B1A;
   --accent-2: #FF4500;
-  --nike: #111;
+  --accent-soft: rgba(255,107,26,0.12);
   --display: 'Bebas Neue', sans-serif;
   --serif: 'Instrument Serif', serif;
   --body: 'Inter', sans-serif;
   --mono: 'JetBrains Mono', monospace;
+  --maxw: 1400px;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
 
 body {
   background: var(--bg);
@@ -38,1009 +45,781 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
-
 ::selection { background: var(--accent); color: #000; }
 
-/* Grain overlay */
+/* Grain + faint warm field bleeding from the hero's orange */
 body::before {
   content: '';
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 1000;
-  opacity: 0.04;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 1000;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' /%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: -1;
+  background:
+    radial-gradient(60vw 60vw at 78% 8%, rgba(255,107,26,0.10) 0%, rgba(255,107,26,0) 60%),
+    radial-gradient(50vw 50vw at 12% 92%, rgba(255,69,0,0.06) 0%, rgba(255,69,0,0) 55%);
+}
+
+a { color: inherit; }
+.wrap { max-width: var(--maxw); margin: 0 auto; }
 
 /* ─── NAV ─── */
 nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  padding: 1.25rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(10,10,10,0.7);
-  backdrop-filter: blur(20px);
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 1rem 2rem;
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba(9,8,7,0.72);
+  backdrop-filter: blur(18px);
   border-bottom: 0.5px solid var(--border);
 }
-.brand {
+.brand { display: flex; align-items: center; gap: 0.85rem; }
+.brand .mark {
   font-family: var(--display);
-  font-size: 1.5rem;
-  letter-spacing: 0.05em;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
+  font-size: 1.45rem; letter-spacing: 0.05em; line-height: 1;
 }
-.brand::before {
-  content: '';
-  width: 8px; height: 8px;
+.status {
+  display: flex; align-items: center; gap: 0.45rem;
+  font-family: var(--mono); font-size: 0.6rem;
+  letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--muted);
+  padding: 0.3rem 0.6rem;
+  border: 0.5px solid var(--border-2);
+}
+.status .dot {
+  width: 6px; height: 6px; border-radius: 50%;
   background: var(--accent);
-  border-radius: 50%;
   animation: pulse 2s ease-in-out infinite;
 }
 @keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(0.8); }
+  0%,100% { opacity: 1; box-shadow: 0 0 0 0 rgba(255,107,26,0.5); }
+  50% { opacity: 0.55; box-shadow: 0 0 0 5px rgba(255,107,26,0); }
 }
-.nav-links {
-  display: flex;
-  gap: 2rem;
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-}
-.nav-links a {
-  color: var(--muted);
-  text-decoration: none;
-  transition: color 0.2s;
-}
+.nav-links { display: flex; gap: 2rem; font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; }
+.nav-links a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
 .nav-links a:hover { color: var(--text); }
-.author {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  color: var(--muted);
-  letter-spacing: 0.1em;
-}
+.author { font-family: var(--mono); font-size: 0.68rem; color: var(--muted); letter-spacing: 0.1em; }
 
 /* ─── HERO ─── */
 .hero {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.35fr 0.65fr;
   align-items: center;
-  padding: 6rem 2rem 3rem;
+  gap: 3rem;
+  padding: 7rem 2rem 4rem;
+  max-width: var(--maxw); margin: 0 auto;
   position: relative;
-  overflow: hidden;
-}
-.hero-left {
-  position: relative;
-  z-index: 2;
-  padding-right: 2rem;
 }
 .kicker {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.25em;
-  color: var(--accent);
-  margin-bottom: 2rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.26em;
+  color: var(--accent); margin-bottom: 2rem;
+  display: flex; align-items: center; gap: 0.75rem;
 }
-.kicker::before {
-  content: '';
-  width: 24px;
-  height: 1px;
-  background: var(--accent);
-}
+.kicker::before { content: ''; width: 26px; height: 1px; background: var(--accent); }
 .hero h1 {
   font-family: var(--display);
-  font-size: clamp(3.5rem, 9vw, 8rem);
-  line-height: 0.85;
-  letter-spacing: -0.01em;
-  margin-bottom: 1.5rem;
+  font-size: clamp(3.6rem, 10vw, 9rem);
+  line-height: 0.82; letter-spacing: -0.005em;
+  margin-bottom: 1.75rem;
+}
+.hero h1 .ln { display: block; overflow: hidden; }
+.hero h1 .ln > span {
+  display: block;
+  transform: translateY(110%);
+  transition: transform 0.9s cubic-bezier(.16,1,.3,1);
 }
 .hero h1 .italic {
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 400;
+  font-family: var(--serif); font-style: italic; font-weight: 400;
   color: var(--accent);
 }
 .hero-sub {
-  font-family: var(--serif);
-  font-size: 1.5rem;
-  line-height: 1.3;
-  color: var(--muted);
-  margin-bottom: 2.5rem;
-  max-width: 480px;
+  font-family: var(--serif); font-size: 1.5rem; line-height: 1.3;
+  color: var(--muted); margin-bottom: 2.25rem; max-width: 520px;
 }
-.hero-sub em {
-  color: var(--text);
-  font-style: italic;
-}
+.hero-sub em { color: var(--text); font-style: italic; }
 .hero-meta {
-  display: flex;
-  gap: 2rem;
-  margin-bottom: 2.5rem;
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--muted);
+  display: flex; gap: 2.5rem; margin-bottom: 2.5rem;
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--muted);
 }
-.hero-meta div {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-}
-.hero-meta strong {
-  color: var(--text);
-  font-weight: 500;
-}
-.cta-row {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
+.hero-meta div { display: flex; flex-direction: column; gap: 0.35rem; }
+.hero-meta strong { color: var(--text); font-weight: 500; }
+.cta-row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
 .btn {
-  font-family: var(--body);
-  font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-family: var(--body); font-size: 0.82rem; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
   padding: 1rem 1.75rem;
-  border: 1px solid var(--accent);
-  background: var(--accent);
-  color: #000;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.2s;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
+  border: 1px solid var(--accent); background: var(--accent); color: #000;
+  cursor: pointer; text-decoration: none;
+  transition: all 0.2s; display: inline-flex; align-items: center; gap: 0.6rem;
 }
 .btn:hover { background: transparent; color: var(--accent); }
-.btn-ghost {
-  background: transparent;
-  color: var(--text);
-  border-color: var(--border-2);
-}
-.btn-ghost:hover { border-color: var(--text); color: var(--text); }
+.btn-ghost { background: transparent; color: var(--text); border-color: var(--border-2); }
+.btn-ghost:hover { border-color: var(--text); }
 
-.hero-right {
+/* Editorial image "plate" — small on purpose, framed, captioned */
+.plate { position: relative; }
+.plate-frame {
+  border: 0.5px solid var(--border-2);
+  padding: 0.75rem;
+  background: linear-gradient(180deg, var(--surface) 0%, var(--bg-2) 100%);
   position: relative;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
-.hero-image-wrap {
-  position: relative;
-  width: 100%;
-  max-width: 540px;
-  aspect-ratio: 1 / 1.15;
+.plate-frame::before {
+  content: 'FIG. 01'; position: absolute; top: -0.5px; left: -0.5px;
+  font-family: var(--mono); font-size: 0.55rem; letter-spacing: 0.2em;
+  color: #000; background: var(--accent);
+  padding: 0.3rem 0.5rem;
 }
-.hero-image-wrap::before {
-  content: '';
-  position: absolute;
-  inset: -2rem;
-  background: radial-gradient(circle at center, rgba(255,107,26,0.5) 0%, rgba(255,107,26,0) 60%);
-  z-index: 0;
-  filter: blur(40px);
+.plate-frame img {
+  display: block; width: 100%; height: auto;
+  image-rendering: -webkit-optimize-contrast;
+  filter: contrast(1.06) saturate(1.08);
 }
-.hero-image-wrap img {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  z-index: 1;
-  filter: contrast(1.05) saturate(1.1);
+.plate-cap {
+  display: flex; justify-content: space-between; gap: 1rem;
+  margin-top: 0.7rem;
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted);
 }
-.hero-tag {
-  position: absolute;
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--text);
-  z-index: 3;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.plate-cap .credit { color: var(--muted-2); }
+.plate-tags {
+  display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.9rem;
 }
-.hero-tag::before {
-  content: '';
-  width: 6px; height: 6px;
-  background: var(--accent);
-  border-radius: 50%;
+.plate-tags span {
+  font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
+  border: 0.5px solid var(--border); padding: 0.3rem 0.55rem;
 }
-.tag-1 { top: 12%; right: -2rem; }
-.tag-2 { bottom: 18%; left: -1rem; }
-.tag-3 { top: 45%; right: -1rem; }
 
 .scroll-hint {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.25em;
-  color: var(--muted);
-  text-transform: uppercase;
-  z-index: 5;
+  position: absolute; bottom: 1.5rem; left: 2rem;
+  font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.25em;
+  color: var(--muted-2); text-transform: uppercase;
 }
 .scroll-hint::after {
-  content: '';
-  display: block;
-  width: 1px;
-  height: 30px;
-  background: var(--border-2);
-  margin: 0.75rem auto 0;
-  animation: scrollLine 2s ease-in-out infinite;
-  transform-origin: top;
+  content: ''; display: block; width: 1px; height: 28px;
+  background: var(--border-2); margin: 0.6rem 0 0;
+  animation: scrollLine 2s ease-in-out infinite; transform-origin: top;
 }
-@keyframes scrollLine {
-  0%, 100% { transform: scaleY(0.3); }
-  50% { transform: scaleY(1); }
-}
+@keyframes scrollLine { 0%,100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
 
 /* ─── MARQUEE ─── */
 .marquee {
   border-top: 0.5px solid var(--border);
   border-bottom: 0.5px solid var(--border);
-  padding: 1.5rem 0;
-  overflow: hidden;
-  white-space: nowrap;
-  background: var(--bg);
+  padding: 0.95rem 0; overflow: hidden; white-space: nowrap;
 }
 .marquee-track {
-  display: inline-flex;
-  gap: 4rem;
-  animation: scroll 40s linear infinite;
-  font-family: var(--display);
-  font-size: 1.5rem;
-  letter-spacing: 0.05em;
-  color: var(--muted);
+  display: inline-flex; gap: 3rem;
+  animation: scroll 55s linear infinite;
+  font-family: var(--mono); font-size: 0.78rem;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted);
 }
-.marquee-track span { display: inline-flex; align-items: center; gap: 4rem; }
+.marquee-track span { display: inline-flex; align-items: center; gap: 3rem; }
 .marquee-track .dot { color: var(--accent); }
-@keyframes scroll {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
+@keyframes scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* ─── SECTION ─── */
-section {
-  padding: 6rem 2rem;
-  position: relative;
-  max-width: 1400px;
-  margin: 0 auto;
-}
+section { padding: 6.5rem 2rem; position: relative; max-width: var(--maxw); margin: 0 auto; }
 .section-label {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.26em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 1.1rem;
+  display: flex; align-items: center; gap: 0.75rem;
 }
-.section-label::before {
-  content: '';
-  width: 24px;
-  height: 1px;
-  background: var(--accent);
-}
+.section-label::before { content: ''; width: 26px; height: 1px; background: var(--accent); }
 .section-title {
   font-family: var(--display);
-  font-size: clamp(2.5rem, 5vw, 4.5rem);
-  line-height: 0.95;
-  letter-spacing: -0.01em;
-  margin-bottom: 1.5rem;
-  max-width: 900px;
+  font-size: clamp(2.4rem, 5.2vw, 4.6rem);
+  line-height: 0.95; letter-spacing: -0.005em;
+  margin-bottom: 1.4rem; max-width: 980px;
 }
-.section-title .italic {
-  font-family: var(--serif);
-  font-style: italic;
-  font-weight: 400;
-  color: var(--accent);
-}
+.section-title .italic { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--accent); }
 .section-intro {
-  font-family: var(--serif);
-  font-size: 1.35rem;
-  line-height: 1.4;
-  color: var(--muted);
-  max-width: 720px;
-  margin-bottom: 4rem;
+  font-family: var(--serif); font-size: 1.32rem; line-height: 1.42;
+  color: var(--muted); max-width: 740px; margin-bottom: 3.5rem;
 }
 .section-intro em { color: var(--text); font-style: italic; }
 
-/* ─── INSIGHT GRID ─── */
-.insight-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 1rem;
-}
+/* ─── INTEL GRID ─── */
+.insight-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 1rem; }
 .insight-card {
-  background: var(--surface);
-  border: 0.5px solid var(--border);
-  padding: 2rem;
-  position: relative;
-  transition: all 0.3s cubic-bezier(.16,1,.3,1);
-  overflow: hidden;
+  background: var(--surface); border: 0.5px solid var(--border);
+  padding: 2rem; position: relative; overflow: hidden;
+  transition: transform 0.4s cubic-bezier(.16,1,.3,1), border-color 0.3s;
 }
-.insight-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--accent);
-}
+.insight-card:hover { transform: translateY(-4px); border-color: var(--accent); }
 .insight-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0;
-  width: 0;
-  height: 1px;
-  background: var(--accent);
-  transition: width 0.4s ease;
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 0; height: 1px; background: var(--accent); transition: width 0.5s ease;
 }
 .insight-card:hover::before { width: 100%; }
+.span-5{grid-column:span 5}.span-7{grid-column:span 7}.span-4{grid-column:span 4}
+.span-8{grid-column:span 8}.span-6{grid-column:span 6}.span-12{grid-column:span 12}
+.card-num { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1.4rem; }
+.card-title { font-family: var(--display); font-size: 2rem; line-height: 1; letter-spacing: 0.01em; margin-bottom: 1rem; }
+.card-body { font-size: 0.95rem; color: var(--muted); line-height: 1.65; }
+.card-body em { color: var(--text); font-style: italic; }
+.big-stat { font-family: var(--display); font-size: clamp(3.6rem, 7vw, 6.5rem); line-height: 0.82; color: var(--accent); margin-bottom: 0.5rem; }
+.big-stat-label { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
 
-.insight-card.span-5 { grid-column: span 5; }
-.insight-card.span-7 { grid-column: span 7; }
-.insight-card.span-4 { grid-column: span 4; }
-.insight-card.span-8 { grid-column: span 8; }
-.insight-card.span-6 { grid-column: span 6; }
-.insight-card.span-12 { grid-column: span 12; }
-
-.card-num {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.2em;
-  color: var(--accent);
-  margin-bottom: 1.5rem;
+/* ─── SIGNAL ENGINE (live, simulated) ─── */
+.signal-panel {
+  background: var(--bg-2); border: 0.5px solid var(--border);
+  margin-top: 1rem;
 }
-.card-title {
-  font-family: var(--display);
-  font-size: 2rem;
-  line-height: 1;
-  letter-spacing: 0.01em;
-  margin-bottom: 1rem;
+.signal-head {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 1rem; flex-wrap: wrap;
+  padding: 1.1rem 1.5rem; border-bottom: 0.5px solid var(--border);
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
 }
-.card-body {
-  font-size: 0.95rem;
-  color: var(--muted);
-  line-height: 1.6;
+.signal-head .live { display: flex; align-items: center; gap: 0.5rem; color: var(--text); }
+.signal-head .live .dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
+  animation: pulse 1.6s ease-in-out infinite;
 }
-.big-stat {
-  font-family: var(--display);
-  font-size: clamp(4rem, 8vw, 7rem);
-  line-height: 0.85;
-  color: var(--accent);
-  margin-bottom: 0.5rem;
-}
-.big-stat-label {
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-/* ─── INTERACTIVE: CAMPAIGN GENERATOR ─── */
-.gen-wrap {
-  background: var(--bg-2);
-  border: 0.5px solid var(--border);
-  padding: 3rem;
-  margin-top: 2rem;
-}
-.gen-controls {
+.signal-head .right { display: flex; gap: 1.75rem; }
+.signal-head b { color: var(--accent); font-weight: 500; }
+.signal-list { list-style: none; }
+.signal-row {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr auto;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  align-items: end;
+  grid-template-columns: 92px 1fr 150px 110px 84px;
+  gap: 1rem; align-items: center;
+  padding: 1rem 1.5rem; border-bottom: 0.5px solid var(--border);
+  font-size: 0.9rem;
+  animation: signalIn 0.55s cubic-bezier(.16,1,.3,1);
+}
+.signal-row:last-child { border-bottom: 0; }
+@keyframes signalIn {
+  from { opacity: 0; transform: translateY(-10px); background: var(--accent-soft); }
+  to { opacity: 1; transform: translateY(0); background: transparent; }
+}
+.sig-src { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+.sig-txt { color: var(--text); }
+.sig-region { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+.sig-metric { font-family: var(--mono); font-size: 0.78rem; color: var(--text); }
+.sig-metric .up { color: var(--accent); }
+.sig-time { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-2); text-align: right; }
+.signal-foot {
+  padding: 1rem 1.5rem; font-family: var(--mono); font-size: 0.62rem;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2);
+}
+
+/* ─── THE CO-PILOT (generator) ─── */
+.gen-wrap { background: var(--bg-2); border: 0.5px solid var(--border); padding: 2.5rem; margin-top: 1rem; }
+.gen-bar {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 1rem; flex-wrap: wrap;
+  font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--muted);
+  padding-bottom: 1.5rem; margin-bottom: 1.75rem;
+  border-bottom: 0.5px solid var(--border);
+}
+.gen-bar .nodeid { color: var(--muted-2); }
+.gen-controls {
+  display: grid; grid-template-columns: 1fr 1fr 1fr auto; gap: 1rem;
+  align-items: end; margin-bottom: 1.5rem;
 }
 .control label {
-  display: block;
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
+  display: block; font-family: var(--mono); font-size: 0.62rem;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
   margin-bottom: 0.6rem;
 }
-.control select, .control input {
-  width: 100%;
-  background: var(--surface);
-  border: 1px solid var(--border-2);
-  color: var(--text);
-  padding: 0.9rem 1rem;
-  font-family: var(--body);
-  font-size: 0.95rem;
-  font-weight: 400;
-  appearance: none;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-.control select:focus, .control input:focus {
-  outline: none;
-  border-color: var(--accent);
-}
 .control select {
-  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23FF6B1A' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  padding-right: 2.5rem;
+  width: 100%; background: var(--surface); border: 1px solid var(--border-2);
+  color: var(--text); padding: 0.9rem 2.5rem 0.9rem 1rem;
+  font-family: var(--body); font-size: 0.93rem; font-weight: 400;
+  appearance: none; cursor: pointer; transition: border-color 0.2s;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23FF6B1A' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 1rem center;
 }
+.control select:focus { outline: none; border-color: var(--accent); }
 .gen-btn {
-  font-family: var(--body);
-  font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  padding: 0.95rem 1.5rem;
-  border: 1px solid var(--accent);
-  background: var(--accent);
-  color: #000;
-  cursor: pointer;
-  transition: all 0.2s;
-  white-space: nowrap;
+  font-family: var(--body); font-size: 0.83rem; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.95rem 1.6rem; border: 1px solid var(--accent);
+  background: var(--accent); color: #000; cursor: pointer;
+  transition: all 0.2s; white-space: nowrap;
 }
 .gen-btn:hover { background: transparent; color: var(--accent); }
 .gen-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.gen-output {
-  background: var(--surface);
-  border-left: 2px solid var(--accent);
-  padding: 2rem;
-  min-height: 200px;
-  font-family: var(--body);
-  color: var(--text);
-  white-space: pre-wrap;
-  line-height: 1.7;
-  font-size: 0.95rem;
+/* Thinking / processing state */
+.gen-thinking { display: none; padding: 1rem 0 0.25rem; }
+.gen-thinking.on { display: block; }
+.tstep {
+  display: flex; align-items: center; gap: 0.85rem;
+  font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted-2);
+  padding: 0.5rem 0; transition: color 0.3s;
 }
-.gen-output.empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--serif);
-  font-style: italic;
-  color: var(--muted);
-  font-size: 1.1rem;
-  border-left-color: var(--border);
+.tstep .tick {
+  width: 14px; height: 14px; border: 1px solid var(--muted-2);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.6rem;
 }
-.gen-output strong {
-  color: var(--accent);
-  font-family: var(--display);
-  font-size: 1.5rem;
-  letter-spacing: 0.02em;
-  font-weight: 400;
-  display: block;
-  margin-bottom: 0.5rem;
-  margin-top: 1rem;
+.tstep.active { color: var(--text); }
+.tstep.active .tick { border-color: var(--accent); }
+.tstep.done { color: var(--muted); }
+.tstep.done .tick { border-color: var(--accent); background: var(--accent); color: #000; }
+.scanbar {
+  height: 2px; background: var(--surface-2); margin: 0.75rem 0 0.25rem;
+  overflow: hidden; position: relative;
 }
-.gen-output strong:first-child { margin-top: 0; }
+.scanbar::after {
+  content: ''; position: absolute; inset: 0; width: 35%;
+  background: var(--accent);
+  animation: scan 1.1s ease-in-out infinite;
+}
+@keyframes scan { 0% { left: -35%; } 100% { left: 100%; } }
+
+/* Variant output */
+.gen-empty {
+  background: var(--surface); border-left: 2px solid var(--border);
+  padding: 2.5rem; min-height: 180px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-style: italic; color: var(--muted);
+  font-size: 1.12rem; text-align: center;
+}
+.variants { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.variant {
+  background: var(--surface); border: 0.5px solid var(--border);
+  border-top: 2px solid var(--accent);
+  padding: 1.75rem; display: flex; flex-direction: column;
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(.16,1,.3,1);
+}
+.variant.in { opacity: 1; transform: translateY(0); }
+.variant .v-num {
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 1rem;
+  display: flex; justify-content: space-between;
+}
+.variant .v-name {
+  font-family: var(--display); font-size: 1.9rem; line-height: 1;
+  letter-spacing: 0.01em; margin-bottom: 1rem; min-height: 1em;
+}
+.variant .v-field { margin-bottom: 1.1rem; }
+.variant .v-k {
+  font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 0.45rem;
+}
+.variant .v-idea { font-size: 0.92rem; color: var(--muted); line-height: 1.6; }
+.variant .v-headline {
+  font-family: var(--serif); font-style: italic; font-size: 1.3rem;
+  line-height: 1.2; color: var(--text);
+}
+.variant .v-channels { list-style: none; }
+.variant .v-channels li {
+  font-size: 0.86rem; color: var(--muted); line-height: 1.5;
+  padding: 0.4rem 0 0.4rem 1rem; position: relative;
+  border-bottom: 0.5px solid var(--border);
+}
+.variant .v-channels li:last-child { border-bottom: 0; }
+.variant .v-channels li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
+.variant .v-channels b { color: var(--text); font-weight: 500; }
+.variant .v-copy {
+  margin-top: auto; padding-top: 1.25rem;
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
+  background: none; border: 0; cursor: pointer; text-align: left;
+  transition: color 0.2s;
+}
+.variant .v-copy:hover { color: var(--accent); }
 
 .gen-status {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.15em;
-  color: var(--muted);
-  margin-top: 1rem;
-  text-transform: uppercase;
+  display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.14em;
+  color: var(--muted); margin-top: 1.5rem; text-transform: uppercase;
 }
-.thinking {
-  display: inline-block;
-  width: 8px; height: 8px;
-  background: var(--accent);
-  border-radius: 50%;
-  animation: thinking 1.4s ease-in-out infinite;
-  margin-right: 0.5rem;
+.gen-status .err { color: var(--accent); }
+.gen-regen {
+  font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--muted);
+  background: none; border: 0; cursor: pointer; transition: color 0.2s;
 }
-@keyframes thinking {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 1; }
-}
+.gen-regen:hover { color: var(--accent); }
+.gen-regen:disabled { opacity: 0.4; cursor: not-allowed; }
 
-/* ─── CAMPAIGN MOCKUPS ─── */
-.mockups {
-  display: grid;
-  grid-template-columns: 1.3fr 1fr 1fr;
-  gap: 1rem;
-  margin-top: 2rem;
-}
+/* ─── MOCKUPS ─── */
+.mock-head { margin-top: 5.5rem; }
+.mockups { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 1rem; margin-top: 2rem; }
 .mockup {
-  aspect-ratio: 3 / 4;
-  background: var(--surface);
-  position: relative;
-  overflow: hidden;
-  border: 0.5px solid var(--border);
-  cursor: pointer;
+  aspect-ratio: 3 / 4; background: var(--surface); position: relative;
+  overflow: hidden; border: 0.5px solid var(--border); cursor: default;
   transition: transform 0.4s cubic-bezier(.16,1,.3,1);
 }
-.mockup:hover { transform: scale(0.99); }
+.mockup:hover { transform: translateY(-4px); }
 .mockup-1 {
-  background: linear-gradient(180deg, #FF6B1A 0%, #FF4500 100%);
-  display: flex;
-  align-items: flex-end;
-  padding: 2rem;
+  background: linear-gradient(165deg, #FF6B1A 0%, #FF4500 100%);
+  display: flex; align-items: flex-end; padding: 2rem;
 }
-.mockup-1 .mock-text {
-  font-family: var(--display);
-  font-size: 3rem;
-  line-height: 0.9;
-  color: #000;
-  letter-spacing: -0.01em;
-}
-.mockup-1 .mock-sub {
-  font-family: var(--mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(0,0,0,0.6);
-  margin-bottom: 0.75rem;
-}
-.mockup-2 {
-  background: #000;
-  color: var(--accent);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 1.5rem;
-}
-.mockup-2 .mock-num {
-  font-family: var(--display);
-  font-size: 6rem;
-  line-height: 0.85;
-  color: var(--accent);
-}
-.mockup-2 .mock-cap {
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.mockup-3 {
-  background: var(--text);
-  color: #000;
-  padding: 1.5rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.mockup-3 .mock-quote {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 1.4rem;
-  line-height: 1.2;
-  color: #000;
-}
-.mockup-3 .mock-attr {
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(0,0,0,0.5);
-}
+.mockup-1 .mock-sub { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(0,0,0,0.55); margin-bottom: 0.75rem; }
+.mockup-1 .mock-text { font-family: var(--display); font-size: clamp(2rem,3.2vw,3rem); line-height: 0.9; color: #000; letter-spacing: -0.01em; }
+.mockup-2 { background: #000; display: flex; flex-direction: column; justify-content: space-between; padding: 1.6rem; }
+.mockup-2 .mock-num { font-family: var(--display); font-size: clamp(4rem,7vw,6.5rem); line-height: 0.82; color: var(--accent); }
+.mockup-2 .mock-cap { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+.mockup-3 { background: var(--text); color: #000; padding: 1.6rem; display: flex; flex-direction: column; justify-content: space-between; }
+.mockup-3 .mock-quote { font-family: var(--serif); font-style: italic; font-size: 1.4rem; line-height: 1.2; color: #000; }
+.mockup-3 .mock-attr { font-family: var(--mono); font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(0,0,0,0.5); }
 .mockup-label {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  font-family: var(--mono);
-  font-size: 0.6rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  background: rgba(0,0,0,0.6);
-  color: var(--text);
+  position: absolute; top: 1rem; left: 1rem;
+  font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.2em;
+  text-transform: uppercase; background: rgba(0,0,0,0.6); color: var(--text);
   padding: 0.3rem 0.6rem;
 }
 .mockup-1 .mockup-label { background: rgba(0,0,0,0.2); }
-.mockup-3 .mockup-label { background: rgba(0,0,0,0.1); color: #000; }
+.mockup-3 .mockup-label { background: rgba(0,0,0,0.12); color: #000; }
 
-/* ─── STRATEGIC BRIEF ─── */
-.brief-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  margin-top: 2rem;
-}
+/* ─── BRIEF ─── */
+.brief-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3.5rem; margin-top: 1rem; counter-reset: brief-counter; }
 .brief-col h3 {
-  font-family: var(--display);
-  font-size: 2rem;
-  letter-spacing: 0.01em;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
+  font-family: var(--display); font-size: 2rem; letter-spacing: 0.01em;
+  margin-bottom: 1.4rem; padding-bottom: 1rem;
   border-bottom: 0.5px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+  display: flex; align-items: center; gap: 1rem;
 }
 .brief-col h3::before {
-  content: counter(brief-counter);
+  content: counter(brief-counter, decimal-leading-zero);
   counter-increment: brief-counter;
-  font-family: var(--mono);
-  font-size: 0.85rem;
-  color: var(--accent);
-  letter-spacing: 0;
+  font-family: var(--mono); font-size: 0.8rem; color: var(--accent); letter-spacing: 0;
 }
-.brief-grid { counter-reset: brief-counter; }
-.brief-col p {
-  color: var(--muted);
-  margin-bottom: 1.25rem;
-  font-size: 0.95rem;
-  line-height: 1.7;
-}
+.brief-col p { color: var(--muted); margin-bottom: 1.2rem; font-size: 0.95rem; line-height: 1.7; }
 .brief-col p em { color: var(--text); font-style: italic; }
-.brief-col ul { list-style: none; padding: 0; }
+.brief-col ul { list-style: none; }
 .brief-col li {
-  color: var(--muted);
-  font-size: 0.95rem;
-  padding: 0.75rem 0 0.75rem 1.5rem;
-  border-bottom: 0.5px solid var(--border);
+  color: var(--muted); font-size: 0.95rem;
+  padding: 0.75rem 0 0.75rem 1.5rem; border-bottom: 0.5px solid var(--border);
   position: relative;
 }
-.brief-col li::before {
-  content: '→';
-  position: absolute;
-  left: 0;
-  color: var(--accent);
-}
+.brief-col li::before { content: '→'; position: absolute; left: 0; color: var(--accent); }
 .brief-col li strong { color: var(--text); font-weight: 500; }
 
-/* ─── FOOTER / BUILDER NOTE ─── */
-.builder-note {
-  background: var(--bg-2);
-  border-top: 0.5px solid var(--border);
-  padding: 5rem 2rem;
-}
-.builder-inner {
-  max-width: 900px;
-  margin: 0 auto;
-  text-align: center;
-}
+/* ─── BUILDER / FOOTER ─── */
+.builder-note { background: var(--bg-2); border-top: 0.5px solid var(--border); padding: 5.5rem 2rem; }
+.builder-inner { max-width: 900px; margin: 0 auto; text-align: center; }
 .builder-inner .section-label { justify-content: center; }
-.builder-inner h2 {
-  font-family: var(--display);
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  line-height: 1;
-  margin-bottom: 1.5rem;
-}
-.builder-inner h2 .italic {
-  font-family: var(--serif);
-  font-style: italic;
-  color: var(--accent);
-}
-.builder-inner p {
-  font-family: var(--serif);
-  font-size: 1.3rem;
-  line-height: 1.4;
-  color: var(--muted);
-  margin-bottom: 2.5rem;
-}
-.builder-stack {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 2rem;
-}
+.builder-inner h2 { font-family: var(--display); font-size: clamp(2rem,4vw,3.5rem); line-height: 1; margin-bottom: 1.4rem; }
+.builder-inner h2 .italic { font-family: var(--serif); font-style: italic; color: var(--accent); }
+.builder-inner p { font-family: var(--serif); font-size: 1.28rem; line-height: 1.45; color: var(--muted); margin-bottom: 2.25rem; }
+.builder-inner p em { color: var(--text); font-style: italic; }
+.builder-stack { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2rem; }
 .stack-pill {
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  padding: 0.5rem 1rem;
-  border: 0.5px solid var(--border-2);
-  color: var(--muted);
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.15em;
+  text-transform: uppercase; padding: 0.5rem 1rem;
+  border: 0.5px solid var(--border-2); color: var(--muted);
 }
-.contact {
-  display: flex;
-  gap: 1.5rem;
-  justify-content: center;
-  align-items: center;
-  font-family: var(--mono);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-}
-.contact a {
-  color: var(--accent);
-  text-decoration: none;
-  border-bottom: 1px solid var(--accent);
-  padding-bottom: 2px;
-  transition: opacity 0.2s;
-}
-.contact a:hover { opacity: 0.7; }
-.contact span { color: var(--muted); }
-
+.contact { display: flex; gap: 1.5rem; justify-content: center; align-items: center; flex-wrap: wrap; font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.1em; }
+.contact a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent); padding-bottom: 2px; transition: opacity 0.2s; }
+.contact a:hover { opacity: 0.65; }
+.contact .lead { color: var(--muted); }
 footer {
-  padding: 2rem;
-  border-top: 0.5px solid var(--border);
-  display: flex;
-  justify-content: space-between;
-  font-family: var(--mono);
-  font-size: 0.7rem;
-  letter-spacing: 0.15em;
-  color: var(--muted);
-  text-transform: uppercase;
+  padding: 2rem; border-top: 0.5px solid var(--border);
+  display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.15em;
+  color: var(--muted-2); text-transform: uppercase;
 }
 
-/* ─── ANIMATIONS ─── */
-.fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.8s cubic-bezier(.16,1,.3,1);
-}
-.fade-in.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
+/* ─── REVEAL ─── */
+.fade-in { opacity: 0; transform: translateY(22px); transition: opacity 0.9s cubic-bezier(.16,1,.3,1), transform 0.9s cubic-bezier(.16,1,.3,1); }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
 
 /* ─── RESPONSIVE ─── */
 @media (max-width: 1024px) {
-  .hero { grid-template-columns: 1fr; }
-  .hero-right { margin-top: 3rem; }
-  .insight-card.span-5, .insight-card.span-7,
-  .insight-card.span-4, .insight-card.span-8,
-  .insight-card.span-6 { grid-column: span 12; }
+  .hero { grid-template-columns: 1fr; gap: 2.5rem; padding-top: 6.5rem; }
+  .plate { max-width: 360px; }
+  .span-5,.span-7,.span-4,.span-8,.span-6 { grid-column: span 12; }
   .brief-grid { grid-template-columns: 1fr; gap: 2rem; }
   .gen-controls { grid-template-columns: 1fr; }
+  .variants { grid-template-columns: 1fr; }
   .mockups { grid-template-columns: 1fr; }
+  .signal-row { grid-template-columns: 80px 1fr 84px; }
+  .sig-region, .sig-time { display: none; }
 }
 @media (max-width: 640px) {
-  nav { padding: 1rem; }
+  nav { padding: 0.85rem 1rem; }
   .nav-links { display: none; }
-  section { padding: 4rem 1.25rem; }
-  .hero { padding: 5rem 1.25rem 2rem; }
+  section { padding: 4.5rem 1.25rem; }
+  .hero { padding: 5.5rem 1.25rem 3rem; }
+  .hero-meta { gap: 1.5rem; flex-wrap: wrap; }
   .gen-wrap { padding: 1.5rem; }
+  .scroll-hint { display: none; }
+  .signal-head .right { gap: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+  .hero h1 .ln > span { transform: none; }
+  .fade-in { opacity: 1; transform: none; }
+  .variant { opacity: 1; transform: none; }
 }
 </style>
 </head>
 <body>
 
 <nav>
-  <div class="brand">PROJECT WEMBY</div>
+  <div class="brand">
+    <span class="mark">PROJECT WEMBY</span>
+    <span class="status"><span class="dot"></span> System Online</span>
+  </div>
   <div class="nav-links">
     <a href="#intel">Intel</a>
-    <a href="#generator">Generator</a>
+    <a href="#signals">Signals</a>
+    <a href="#generator">Co-Pilot</a>
     <a href="#brief">Brief</a>
     <a href="#about">About</a>
   </div>
-  <div class="author">BY M. OPPENHEIM</div>
+  <div class="author" id="nav-author">BY M. OPPENHEIM</div>
 </nav>
 
 <!-- ─── HERO ─── -->
-<section class="hero">
+<header class="hero">
   <div class="hero-left">
-    <div class="kicker">AI Marketing Intelligence · Nike</div>
+    <div class="kicker">AI Marketing System · Nike Basketball</div>
     <h1>
-      Sign the<br>
-      alien.<br>
-      <span class="italic">Then build a world<br>around him.</span>
+      <span class="ln"><span style="transition-delay:.05s">Sign the</span></span>
+      <span class="ln"><span style="transition-delay:.15s">alien.</span></span>
+      <span class="ln"><span class="italic" style="transition-delay:.28s">Then run</span></span>
+      <span class="ln"><span class="italic" style="transition-delay:.38s">the system.</span></span>
     </h1>
     <p class="hero-sub">
-      A strategic case study on how Nike turns a <em>$100M signing</em> into the most defining athlete-brand story of the next decade — engineered with AI.
+      Not a deck. A working system — a live cultural signal engine and an AI campaign co-pilot that turns a <em>$100M signing</em> into the defining athlete story of the decade.
     </p>
     <div class="hero-meta">
-      <div>
-        <span>Athlete</span>
-        <strong>V. Wembanyama</strong>
-      </div>
-      <div>
-        <span>Category</span>
-        <strong>Basketball</strong>
-      </div>
-      <div>
-        <span>Horizon</span>
-        <strong>2026 — 2030</strong>
-      </div>
+      <div><span>Athlete</span><strong>V. Wembanyama</strong></div>
+      <div><span>Category</span><strong>Basketball</strong></div>
+      <div><span>Horizon</span><strong>2026 — 2030</strong></div>
     </div>
     <div class="cta-row">
-      <a href="#generator" class="btn">Try the AI Generator →</a>
-      <a href="#brief" class="btn btn-ghost">Read the Brief</a>
+      <a href="#generator" class="btn">Run the Co-Pilot →</a>
+      <a href="#signals" class="btn btn-ghost">See it Live</a>
     </div>
   </div>
   <div class="hero-right">
-    <div class="hero-image-wrap">
-      <span class="hero-tag tag-1">7'4"</span>
-      <span class="hero-tag tag-2">Alien Logo</span>
-      <span class="hero-tag tag-3">GT Hustle</span>
-      <img src="wemby-hero.png" alt="Victor Wembanyama mid-flight against orange backdrop" />
+    <div class="plate" id="plate">
+      <div class="plate-frame">
+        <img src="public/wemby-hero.png" alt="Victor Wembanyama mid-flight against an orange backdrop" width="201" height="251" />
+      </div>
+      <div class="plate-cap">
+        <span>Wembanyama / Nike</span>
+        <span class="credit">Ref. plate · archival</span>
+      </div>
+      <div class="plate-tags">
+        <span>7'4"</span><span>Alien Logo</span><span>GT Hustle</span><span>Spurs</span>
+      </div>
     </div>
   </div>
   <div class="scroll-hint">Scroll</div>
-</section>
+</header>
 
 <!-- ─── MARQUEE ─── -->
 <div class="marquee">
   <div class="marquee-track">
-    <span>FACE OF THE LEAGUE <span class="dot">●</span> $100M DEAL <span class="dot">●</span> ALIEN LOGO <span class="dot">●</span> GEN Z ICON <span class="dot">●</span> GLOBAL REACH <span class="dot">●</span> PARIS A.I.R. <span class="dot">●</span> THE EXTRATERRESTRIAL <span class="dot">●</span></span>
-    <span>FACE OF THE LEAGUE <span class="dot">●</span> $100M DEAL <span class="dot">●</span> ALIEN LOGO <span class="dot">●</span> GEN Z ICON <span class="dot">●</span> GLOBAL REACH <span class="dot">●</span> PARIS A.I.R. <span class="dot">●</span> THE EXTRATERRESTRIAL <span class="dot">●</span></span>
+    <span>Face of the league <span class="dot">●</span> $100M deal <span class="dot">●</span> Alien logo <span class="dot">●</span> Gen Z icon <span class="dot">●</span> Global reach <span class="dot">●</span> Paris A.I.R. <span class="dot">●</span> The extraterrestrial <span class="dot">●</span></span>
+    <span>Face of the league <span class="dot">●</span> $100M deal <span class="dot">●</span> Alien logo <span class="dot">●</span> Gen Z icon <span class="dot">●</span> Global reach <span class="dot">●</span> Paris A.I.R. <span class="dot">●</span> The extraterrestrial <span class="dot">●</span></span>
   </div>
 </div>
 
 <!-- ─── INTEL ─── -->
 <section id="intel">
-  <div class="section-label">01 — THE INTELLIGENCE</div>
+  <div class="section-label">01 — The Intelligence</div>
   <h2 class="section-title">A generational asset <span class="italic">demands</span> a generational system.</h2>
   <p class="section-intro">
-    Nike already won the signing war. The next battle is <em>activation</em>. AI is how the same investment turns into ten times the cultural return — faster scouting of cultural moments, faster creative iteration, deeper personalization across 160M+ Nike members worldwide.
+    Nike already won the signing war. The next battle is <em>activation</em> — and AI is how the same investment returns ten times the cultural impact: faster discovery of cultural moments, faster creative iteration, deeper personalization across 160M+ Nike members.
   </p>
 
   <div class="insight-grid">
     <div class="insight-card span-5 fade-in">
       <div class="card-num">/ 01</div>
       <div class="big-stat">$100M</div>
-      <div class="big-stat-label">Reported value of the Nike × Wemby deal</div>
-      <p class="card-body" style="margin-top: 1.5rem;">
-        Largest rookie shoe contract in Nike's history. The financial commitment is locked. The narrative commitment is what AI now unlocks.
-      </p>
+      <div class="big-stat-label">Reported Nike × Wemby deal</div>
+      <p class="card-body" style="margin-top:1.5rem;">Signed before the 2023 NBA Draft — among the richest rookie deals in Nike history. The financial commitment is locked. The narrative commitment is what AI now unlocks.</p>
     </div>
-
     <div class="insight-card span-7 fade-in">
-      <div class="card-num">/ 02 — THE OPPORTUNITY</div>
+      <div class="card-num">/ 02 — The opportunity</div>
       <div class="card-title">Wemby is a story, not a shoe.</div>
-      <p class="card-body">
-        The Alien logo. The bismuth stone. The eclipse reveal. The Paris A.I.R. prototype. Nike has built more world-building around Wembanyama than any rookie since LeBron — but the storytelling has been campaign-by-campaign. AI lets it become <em>always-on</em>: surfacing micro-moments from Wemby's daily life that fans recognize as Nike-shaped, before competitors even register them.
-      </p>
+      <p class="card-body">The Alien logo unveiled on the April 8, 2024 total solar eclipse. The bismuth stone from draft night. The GT Hustle 2 "Alien". The Paris A.I.R. sci-fi prototype. Nike has built more world around Wembanyama than any rookie since LeBron — but campaign-by-campaign. AI makes it <em>always-on</em>: surfacing micro-moments fans recognize as Nike-shaped before competitors register them.</p>
     </div>
-
     <div class="insight-card span-4 fade-in">
       <div class="card-num">/ 03</div>
       <div class="big-stat">160M</div>
       <div class="big-stat-label">Nike app members globally</div>
     </div>
-
     <div class="insight-card span-4 fade-in">
       <div class="card-num">/ 04</div>
       <div class="big-stat">68%</div>
-      <div class="big-stat-label">Gen Z who follow at least one NBA player</div>
+      <div class="big-stat-label">Gen Z following ≥1 NBA player</div>
     </div>
-
     <div class="insight-card span-4 fade-in">
       <div class="card-num">/ 05</div>
       <div class="big-stat">3×</div>
-      <div class="big-stat-label">Global reach vs. US-only NBA stars (FR + EU)</div>
+      <div class="big-stat-label">Reach vs. US-only stars (FR + EU)</div>
     </div>
-
-    <div class="insight-card span-12 fade-in" style="background: linear-gradient(135deg, var(--surface) 0%, var(--bg-2) 100%);">
-      <div class="card-num">/ THE INSIGHT</div>
-      <div class="card-title" style="font-size: 2.5rem; max-width: 900px;">Every Nike rookie campaign has used AI for production. Almost none use it for <span style="color: var(--accent); font-family: var(--serif); font-style: italic;">discovery.</span></div>
-      <p class="card-body" style="max-width: 760px; margin-top: 1.5rem; font-size: 1.05rem;">
-        Wemby drops a sci-fi reference in a post-game interview. A French streetwear designer riffs on the Alien logo in Paris. A high-schooler in Manila posts a Wemby block edit that hits 4M views. These are all campaign seeds — and right now, humans find them three days late. AI finds them in three minutes.
-      </p>
+    <div class="insight-card span-12 fade-in" style="background:linear-gradient(135deg,var(--surface) 0%,var(--bg-2) 100%);">
+      <div class="card-num">/ The insight</div>
+      <div class="card-title" style="font-size:2.4rem;max-width:920px;">Every Nike rookie campaign uses AI for production. Almost none use it for <span style="color:var(--accent);font-family:var(--serif);font-style:italic;">discovery.</span></div>
+      <p class="card-body" style="max-width:760px;margin-top:1.5rem;font-size:1.04rem;">Wemby drops a sci-fi reference post-game. A French designer riffs on the Alien logo in Paris. A high-schooler in Manila posts a block edit that hits 4M views. These are campaign seeds — and right now humans find them three days late. The system below finds them in three minutes.</p>
     </div>
   </div>
 </section>
 
-<!-- ─── INTERACTIVE GENERATOR ─── -->
-<section id="generator">
-  <div class="section-label">02 — THE TOOL</div>
-  <h2 class="section-title">Generate a <span class="italic">Wemby campaign</span> in 8 seconds.</h2>
+<!-- ─── SIGNAL ENGINE ─── -->
+<section id="signals">
+  <div class="section-label">02 — Live: Cultural Signal Engine</div>
+  <h2 class="section-title">The system is <span class="italic">watching</span> right now.</h2>
   <p class="section-intro">
-    A live demo of what an AI marketing co-pilot looks like inside Nike. Pick a product line, an audience, and a cultural angle. The system generates a strategic creative direction — the kind of brief that would normally take a junior strategist half a day.
+    A working concept of the discovery layer — synthetic feed, real behavior. It ranks cultural moments tied to Wemby the moment they move, so Nike posts <em>inside</em> a moment, not after it.
+  </p>
+
+  <div class="signal-panel">
+    <div class="signal-head">
+      <span class="live"><span class="dot"></span> Signal Engine — Live</span>
+      <span class="right">
+        <span>Signals today <b id="sig-count">1,284</b></span>
+        <span>Latency <b>~3 min</b></span>
+        <span id="sig-clock">--:--:--</span>
+      </span>
+    </div>
+    <ul class="signal-list" id="signal-list"></ul>
+    <div class="signal-foot">Demonstration feed — illustrative signals, not live data. The production architecture is in section 04.</div>
+  </div>
+</section>
+
+<!-- ─── CO-PILOT (GENERATOR) ─── -->
+<section id="generator">
+  <div class="section-label">03 — The Co-Pilot</div>
+  <h2 class="section-title">Three campaign directions. <span class="italic">Eight seconds.</span></h2>
+  <p class="section-intro">
+    A live AI co-pilot inside Nike Basketball. Set the brief; it returns <em>three distinct strategic directions</em> — the kind a junior strategist would spend half a day on. Real model, real output.
   </p>
 
   <div class="gen-wrap">
+    <div class="gen-bar">
+      <span>Campaign Co-Pilot</span>
+      <span class="nodeid">model: claude-sonnet · node: wemby-bball-01</span>
+    </div>
     <div class="gen-controls">
       <div class="control">
         <label>Product Line</label>
         <select id="product">
-          <option value="GT Hustle 3 'Alien'">GT Hustle 3 "Alien"</option>
-          <option value="Nike Air signature drop">Nike Air signature drop</option>
-          <option value="Nike Run Club Wemby Edition">Nike Run Club Wemby Edition</option>
-          <option value="Wemby x Nike SB streetwear">Wemby × Nike SB streetwear</option>
-          <option value="Nike Training Club AI Coach">Nike Training Club AI Coach</option>
+          <option>GT Hustle 3 "Alien"</option>
+          <option>Nike Air signature drop</option>
+          <option>Nike Run Club — Wemby Edition</option>
+          <option>Wemby × Nike SB streetwear</option>
+          <option>Nike Training Club AI Coach</option>
         </select>
       </div>
       <div class="control">
         <label>Target Audience</label>
         <select id="audience">
-          <option value="Gen Z hoopers (14–22, US)">Gen Z hoopers (14–22, US)</option>
-          <option value="European basketball fans (FR + global)">European fans (FR + global)</option>
-          <option value="Sneakerheads / streetwear collectors">Sneakerheads / streetwear</option>
-          <option value="Sci-fi & gaming culture overlap">Sci-fi & gaming overlap</option>
-          <option value="Aspiring young athletes (10–14)">Aspiring young athletes (10–14)</option>
+          <option>Gen Z hoopers (14–22, US)</option>
+          <option>European basketball fans (FR + global)</option>
+          <option>Sneakerheads / streetwear collectors</option>
+          <option>Sci-fi &amp; gaming culture overlap</option>
+          <option>Aspiring young athletes (10–14)</option>
         </select>
       </div>
       <div class="control">
         <label>Cultural Angle</label>
         <select id="angle">
-          <option value="Otherworldly / Extraterrestrial">Otherworldly / Alien</option>
-          <option value="French elegance meets American hoops">French elegance × hoops</option>
-          <option value="Generational talent / Greatness coming">Generational greatness</option>
-          <option value="Quiet confidence / Unbothered">Quiet confidence</option>
-          <option value="Future of basketball / The next era">The next era</option>
+          <option>Otherworldly / Extraterrestrial</option>
+          <option>French elegance meets American hoops</option>
+          <option>Generational greatness incoming</option>
+          <option>Quiet confidence / Unbothered</option>
+          <option>The next era of basketball</option>
         </select>
       </div>
       <button class="gen-btn" id="generate">Generate ↗</button>
     </div>
 
-    <div class="gen-output empty" id="output">
-      Configure the inputs and generate a strategic creative direction.
+    <div class="gen-thinking" id="thinking">
+      <div class="tstep" data-step="0"><span class="tick"></span> Reading the brief</div>
+      <div class="tstep" data-step="1"><span class="tick"></span> Scanning the cultural graph</div>
+      <div class="tstep" data-step="2"><span class="tick"></span> Drafting three directions</div>
+      <div class="tstep" data-step="3"><span class="tick"></span> Pressure-testing headlines</div>
+      <div class="scanbar"></div>
     </div>
-    <div class="gen-status" id="status"></div>
+
+    <div id="output">
+      <div class="gen-empty" id="empty">Set the brief and generate three strategic directions.</div>
+    </div>
+
+    <div class="gen-status">
+      <span id="status"></span>
+      <button class="gen-regen" id="regen" disabled>↻ Regenerate alternatives</button>
+    </div>
   </div>
 
-  <!-- Campaign Mockups -->
-  <div style="margin-top: 5rem;">
-    <div class="section-label">SAMPLE OUTPUT MOCKUPS</div>
-    <h3 style="font-family: var(--display); font-size: 2.5rem; margin-bottom: 0.5rem;">What the AI brief becomes.</h3>
-    <p style="color: var(--muted); margin-bottom: 0; max-width: 600px;">The strategic direction translates into multi-format creative — from billboard headlines to social-first cuts.</p>
+  <!-- Mockups -->
+  <div class="mock-head">
+    <div class="section-label">From brief to creative</div>
+    <h3 style="font-family:var(--display);font-size:2.5rem;margin-bottom:0.5rem;">What the direction becomes.</h3>
+    <p style="color:var(--muted);max-width:620px;">The strategic direction translates into multi-format work — out-of-home, social-first, and editorial print.</p>
     <div class="mockups">
       <div class="mockup mockup-1">
-        <div class="mockup-label">BILLBOARD · PARIS</div>
+        <div class="mockup-label">OOH · Billboard · Paris</div>
         <div>
           <div class="mock-sub">Nike Basketball · Drop 03</div>
           <div class="mock-text">FROM ANOTHER<br>PLANET.<br>BUILT FOR<br>THIS ONE.</div>
         </div>
       </div>
       <div class="mockup mockup-2">
-        <div class="mockup-label">SOCIAL · TIKTOK</div>
-        <div>
-          <div class="mock-cap">Blocks per game</div>
-          <div class="mock-num">3.6</div>
-        </div>
-        <div>
-          <div class="mock-cap">More like landings</div>
-        </div>
+        <div class="mockup-label">Social · TikTok</div>
+        <div><div class="mock-cap">Blocks per game</div><div class="mock-num">3.6</div></div>
+        <div class="mock-cap">— more like landings.</div>
       </div>
       <div class="mockup mockup-3">
-        <div class="mockup-label">PRINT · GQ FR</div>
-        <div class="mock-quote">"I don't try to land. I just go up and decide later."</div>
+        <div class="mockup-label">Print · Editorial · FR</div>
+        <div class="mock-quote">"I don't try to land. I go up and decide later."</div>
         <div class="mock-attr">— V. Wembanyama for Nike</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── STRATEGIC BRIEF ─── -->
+<!-- ─── BRIEF ─── -->
 <section id="brief">
-  <div class="section-label">03 — THE BRIEF</div>
-  <h2 class="section-title">What I would build at Nike <span class="italic">on day one.</span></h2>
+  <div class="section-label">04 — The Brief</div>
+  <h2 class="section-title">What I'd build at Nike <span class="italic">on day one.</span></h2>
   <p class="section-intro">
-    A four-part system that operationalizes everything above. Built modularly — could be piloted with Wemby and replicated for every signature athlete on the Nike roster.
+    The four-part system behind everything above. Modular — pilot it with Wemby, replicate it for every signature athlete on the roster.
   </p>
-
   <div class="brief-grid">
     <div class="brief-col">
       <h3>Cultural Signal Engine</h3>
-      <p>An AI system that monitors social platforms, sports media, and fashion press for emerging cultural moments tied to a Nike athlete — surfacing them to the marketing team <em>before</em> they peak.</p>
+      <p>The live panel above, productionized. Monitors social, sports media, and fashion press for emerging moments tied to a Nike athlete — surfacing them <em>before</em> they peak.</p>
       <ul>
         <li><strong>Input:</strong> Athlete handles, brand mentions, cultural keywords</li>
         <li><strong>Output:</strong> Daily ranked feed of activation opportunities</li>
         <li><strong>Win condition:</strong> Nike posts inside a moment, not after</li>
       </ul>
     </div>
-
     <div class="brief-col">
       <h3>Campaign Co-Pilot</h3>
-      <p>The tool you just used, scaled. AI-generated creative briefs that take a product line and audience and produce 5–10 distinct campaign directions — each with headline, visual treatment, and channel mix.</p>
+      <p>The tool you just used, scaled. Takes a product line and audience and produces distinct campaign directions — each with headline, treatment, and channel mix.</p>
       <ul>
         <li><strong>Saves:</strong> ~40 hours of junior strategist time per campaign</li>
         <li><strong>Output:</strong> Editable brief, ready for creative review</li>
-        <li><strong>Win condition:</strong> 10× the iteration speed at half the cost</li>
+        <li><strong>Win condition:</strong> 10× iteration speed at half the cost</li>
       </ul>
     </div>
-
     <div class="brief-col">
       <h3>Personalized Drop Targeting</h3>
-      <p>Every Nike app member sees a different Wemby story. AI matches user behavior (workouts, browsing, region, age bracket) to one of dozens of pre-built narrative angles — same product, infinite framings.</p>
+      <p>Every Nike app member sees a different Wemby story. AI matches behavior (workouts, browsing, region, age) to one of dozens of narrative angles — same product, infinite framings.</p>
       <ul>
         <li><strong>Input:</strong> Nike app member graph + content library</li>
         <li><strong>Output:</strong> Per-user content variant at drop time</li>
         <li><strong>Win condition:</strong> Higher drop conversion, deeper retention</li>
       </ul>
     </div>
-
     <div class="brief-col">
       <h3>Sponsorship Fit Scoring</h3>
-      <p>Built from my work on Caliber — an AI scouting platform I founded that analyzes basketball talent. Adapted for Nike: score every NCAA + EuroLeague prospect on cultural fit, brand alignment, and growth trajectory. Find the next Wemby before the bidding war.</p>
+      <p>Built from my work on Caliber — an AI scouting platform I founded. Adapted for Nike: score every NCAA + EuroLeague prospect on cultural fit, brand alignment, and trajectory. Find the next Wemby before the bidding war.</p>
       <ul>
         <li><strong>Trained on:</strong> Athlete media, social, performance data</li>
         <li><strong>Output:</strong> Ranked sponsorship target list</li>
@@ -1050,116 +829,329 @@ footer {
   </div>
 </section>
 
-<!-- ─── ABOUT / BUILDER ─── -->
+<!-- ─── BUILDER ─── -->
 <div class="builder-note" id="about">
   <div class="builder-inner">
-    <div class="section-label">04 — THE BUILDER</div>
-    <h2>Built in a weekend by <span class="italic">someone who would<br>love to do this full-time.</span></h2>
-    <p>
-      My name is Matthew Oppenheim. I'm a marketing student at the University of Montana and the founder of Caliber, an AI-powered basketball scouting platform. This site is a proof of concept — not a finished product, but a window into how I think about Nike, AI, and the next decade of athlete marketing.
+    <div class="section-label">05 — The Builder</div>
+    <h2>Built by someone who'd <span class="italic">love to do this<br>full-time.</span></h2>
+    <p id="builder-bio">
+      My name is <em>Matthew Oppenheim</em>. I'm a marketing junior at the University of Montana and the founder of Caliber, an AI-powered basketball scouting platform. This isn't a finished product — it's a working window into how I think about Nike, AI, and the next decade of athlete marketing.
     </p>
     <div class="builder-stack">
       <span class="stack-pill">HTML · CSS · JS</span>
       <span class="stack-pill">Anthropic API</span>
+      <span class="stack-pill">Serverless · Netlify</span>
       <span class="stack-pill">Marketing Strategy</span>
-      <span class="stack-pill">Built in 1 weekend</span>
     </div>
-    <div class="contact">
-      <span>Let's talk →</span>
-      <a href="mailto:hello@example.com">Email</a>
-      <a href="#">LinkedIn</a>
-      <a href="#">Caliber</a>
+    <div class="contact" id="contact">
+      <span class="lead">Let's talk →</span>
+      <a id="c-email" href="#">Email</a>
+      <a id="c-linkedin" href="#" target="_blank" rel="noopener">LinkedIn</a>
+      <a id="c-caliber" href="#" target="_blank" rel="noopener">Caliber</a>
     </div>
   </div>
 </div>
 
 <footer>
-  <div>PROJECT WEMBY · 2026</div>
-  <div>UNOFFICIAL · NOT AFFILIATED WITH NIKE</div>
+  <div id="foot-left">PROJECT WEMBY · 2026 · MATTHEW OPPENHEIM</div>
+  <div id="foot-right">UNOFFICIAL · NOT AFFILIATED WITH NIKE</div>
 </footer>
 
+<script src="config.js"></script>
 <script>
-// Fade-in on scroll
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach((entry) => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
-    }
+(function () {
+  "use strict";
+  var CFG = window.WEMBY_CONFIG || {};
+
+  /* ── Config → contact / footer / title ── */
+  function setContact() {
+    var name = CFG.name || "Matthew Oppenheim";
+    var year = CFG.year || new Date().getFullYear();
+    var email = document.getElementById("c-email");
+    var li = document.getElementById("c-linkedin");
+    var cal = document.getElementById("c-caliber");
+    if (CFG.email) email.href = "mailto:" + CFG.email;
+    if (CFG.linkedin) li.href = CFG.linkedin;
+    if (CFG.caliber) cal.href = CFG.caliber;
+    document.getElementById("foot-left").textContent =
+      "PROJECT WEMBY · " + year + " · " + name.toUpperCase();
+    if (CFG.tagline) document.getElementById("foot-right").textContent = CFG.tagline.toUpperCase();
+    var parts = name.trim().split(/\s+/);
+    var initialsLast = (parts[0] ? parts[0][0] + ". " : "") + (parts[parts.length - 1] || "");
+    document.getElementById("nav-author").textContent = "BY " + initialsLast.toUpperCase();
+  }
+  setContact();
+
+  /* ── Hero staggered reveal ── */
+  requestAnimationFrame(function () {
+    document.querySelectorAll(".hero h1 .ln > span").forEach(function (s) {
+      s.style.transform = "translateY(0)";
+    });
   });
-}, { threshold: 0.1 });
-document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-// ─── AI GENERATOR ───
-const generateBtn = document.getElementById('generate');
-const outputEl = document.getElementById('output');
-const statusEl = document.getElementById('status');
+  /* ── Subtle hero-plate parallax (desktop only) ── */
+  var plate = document.getElementById("plate");
+  var allowMotion = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (plate && allowMotion && window.innerWidth > 1024) {
+    var ticking = false;
+    window.addEventListener("scroll", function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        var y = Math.min(window.scrollY, 700);
+        plate.style.transform = "translateY(" + (y * -0.045) + "px)";
+        ticking = false;
+      });
+    }, { passive: true });
+  }
 
-generateBtn.addEventListener('click', async () => {
-  const product = document.getElementById('product').value;
-  const audience = document.getElementById('audience').value;
-  const angle = document.getElementById('angle').value;
+  /* ── Reveal on scroll ── */
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) e.target.classList.add("visible"); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll(".fade-in").forEach(function (el) { io.observe(el); });
 
-  generateBtn.disabled = true;
-  generateBtn.textContent = 'Generating...';
-  outputEl.classList.remove('empty');
-  outputEl.innerHTML = '';
-  statusEl.innerHTML = '<span class="thinking"></span>Claude is drafting your campaign brief...';
+  /* ── Cultural Signal Engine (simulated) ── */
+  var SIGNALS = [
+    { src: "TikTok",    txt: "Wemby block edit goes vertical",            region: "Manila, PH",  m: "4.2M", up: "+38%" },
+    { src: "X / Press", txt: "Sci-fi reference in post-game presser",      region: "San Antonio", m: "21k",  up: "+12%" },
+    { src: "Instagram", txt: "Paris designer riffs on the Alien logo",     region: "Paris, FR",   m: "180k", up: "+64%" },
+    { src: "Reddit",    txt: "r/sneakers debates GT Hustle colorway",      region: "Global",      m: "9.1k", up: "+22%" },
+    { src: "YouTube",   txt: "7'4\" wingspan breakdown trending",          region: "US",          m: "1.3M", up: "+19%" },
+    { src: "On-court",  txt: "Triple-double + 7 blocks vs. contender",     region: "NBA",         m: "Live", up: "+91%" },
+    { src: "TikTok",    txt: "Bismuth-stone draft moment recut",           region: "EU",          m: "770k", up: "+44%" },
+    { src: "Press",     txt: "GQ FR books an editorial feature",           region: "Paris, FR",   m: "—",    up: "new"  },
+    { src: "Discord",   txt: "Gaming server adopts 'the alien' as flair",  region: "Global",      m: "33k",  up: "+15%" },
+    { src: "Instagram", txt: "Eclipse-anniversary fan art surfaces",       region: "US / EU",     m: "240k", up: "+27%" },
+    { src: "TikTok",    txt: "HS prospect cites Wemby as blueprint",       region: "Lagos, NG",   m: "610k", up: "+33%" },
+    { src: "X / Press", txt: "Analyst: 'most marketable rookie since LBJ'", region: "US",         m: "48k",  up: "+9%"  }
+  ];
+  var feed = [];
+  var listEl = document.getElementById("signal-list");
+  var clockEl = document.getElementById("sig-clock");
+  var countEl = document.getElementById("sig-count");
+  var sigCount = 1284;
 
-  const prompt = `You are a senior creative strategist at Nike Basketball working on Victor Wembanyama campaigns.
+  function ago(ts) {
+    var s = Math.floor((Date.now() - ts) / 1000);
+    if (s < 5) return "now";
+    if (s < 60) return s + "s ago";
+    var m = Math.floor(s / 60);
+    return m + "m ago";
+  }
+  function renderFeed() {
+    listEl.innerHTML = feed.map(function (f) {
+      return '<li class="signal-row">' +
+        '<span class="sig-src">' + f.src + '</span>' +
+        '<span class="sig-txt">' + f.txt + '</span>' +
+        '<span class="sig-region">' + f.region + '</span>' +
+        '<span class="sig-metric">' + f.m + ' <span class="up">' + f.up + '</span></span>' +
+        '<span class="sig-time">' + ago(f.ts) + '</span>' +
+      '</li>';
+    }).join("");
+  }
+  function pushSignal() {
+    var s = SIGNALS[Math.floor(Math.random() * SIGNALS.length)];
+    feed.unshift({ src: s.src, txt: s.txt, region: s.region, m: s.m, up: s.up, ts: Date.now() });
+    if (feed.length > 6) feed.pop();
+    sigCount += Math.floor(Math.random() * 4) + 1;
+    countEl.textContent = sigCount.toLocaleString();
+    renderFeed();
+  }
+  for (var i = 0; i < 5; i++) {
+    var s0 = SIGNALS[i];
+    feed.push({ src: s0.src, txt: s0.txt, region: s0.region, m: s0.m, up: s0.up, ts: Date.now() - (i + 1) * 17000 });
+  }
+  renderFeed();
+  function tick() {
+    var d = new Date();
+    clockEl.textContent = d.toTimeString().slice(0, 8);
+    renderFeed();
+  }
+  tick();
+  setInterval(tick, 1000);
+  setInterval(pushSignal, 2800);
 
-Generate a tight, punchy strategic creative direction for the following brief. Be specific, confident, and write in Nike's distinctive voice — bold, declarative, never corporate.
+  /* ── Co-Pilot ── */
+  var ENDPOINT = "/.netlify/functions/generate";
+  var genBtn = document.getElementById("generate");
+  var regenBtn = document.getElementById("regen");
+  var outEl = document.getElementById("output");
+  var statusEl = document.getElementById("status");
+  var thinkEl = document.getElementById("thinking");
+  var steps = Array.prototype.slice.call(thinkEl.querySelectorAll(".tstep"));
+  var stepTimer = null;
 
-PRODUCT LINE: ${product}
-AUDIENCE: ${audience}
-CULTURAL ANGLE: ${angle}
+  function startThinking() {
+    thinkEl.classList.add("on");
+    steps.forEach(function (s) { s.classList.remove("active", "done"); });
+    var idx = 0;
+    steps[0].classList.add("active");
+    stepTimer = setInterval(function () {
+      if (idx < steps.length - 1) {
+        steps[idx].classList.remove("active");
+        steps[idx].classList.add("done");
+        idx++;
+        steps[idx].classList.add("active");
+      }
+    }, 900);
+  }
+  function stopThinking() {
+    clearInterval(stepTimer);
+    steps.forEach(function (s) { s.classList.remove("active"); s.classList.add("done"); });
+    setTimeout(function () { thinkEl.classList.remove("on"); }, 250);
+  }
 
-Structure your response with EXACTLY these 4 sections, each marked with the section name on its own line wrapped in ** like **Section Name**:
+  function parseVariants(text) {
+    var blocks = text.split(/===\s*VARIANT\s*\d+\s*===/i).map(function (b) { return b.trim(); }).filter(Boolean);
+    return blocks.map(function (b) {
+      function grab(key) {
+        var re = new RegExp("^\\s*" + key + ":\\s*(.+)$", "im");
+        var m = b.match(re);
+        return m ? m[1].trim() : "";
+      }
+      var channels = [];
+      var afterCh = b.split(/CHANNELS:/i)[1] || "";
+      afterCh.split(/\r?\n/).forEach(function (ln) {
+        var m = ln.match(/^\s*[-•]\s*(.+)$/);
+        if (m) channels.push(m[1].trim());
+      });
+      return { name: grab("NAME"), idea: grab("IDEA"), headline: grab("HEADLINE"), channels: channels };
+    }).filter(function (v) { return v.name || v.idea || v.headline; }).slice(0, 3);
+  }
 
-**Campaign Name**
-A single bold campaign name (3-5 words max, no quotes).
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    });
+  }
+  function chHTML(c) {
+    var parts = c.split(/\s[—-]\s/);
+    if (parts.length >= 2) return "<b>" + esc(parts[0]) + "</b> — " + esc(parts.slice(1).join(" — "));
+    return esc(c);
+  }
 
-**The Big Idea**
-2 sentences. The strategic insight. Why this lands.
+  function renderVariants(variants) {
+    outEl.innerHTML = '<div class="variants">' + variants.map(function (v, i) {
+      return '<div class="variant" data-i="' + i + '">' +
+        '<div class="v-num"><span>Direction 0' + (i + 1) + '</span><span>Wemby</span></div>' +
+        '<div class="v-name" data-type="' + esc(v.name) + '"></div>' +
+        '<div class="v-field"><div class="v-k">The Big Idea</div><div class="v-idea">' + esc(v.idea) + '</div></div>' +
+        '<div class="v-field"><div class="v-k">Billboard Headline</div><div class="v-headline">' + esc(v.headline) + '</div></div>' +
+        '<div class="v-field"><div class="v-k">Channel Mix</div><ul class="v-channels">' +
+          v.channels.map(function (c) { return "<li>" + chHTML(c) + "</li>"; }).join("") +
+        '</ul></div>' +
+        '<button class="v-copy" data-copy="' + i + '">⧉ Copy this brief</button>' +
+      '</div>';
+    }).join("") + "</div>";
 
-**The Headline**
-One headline. Maximum 8 words. Should feel like it could be on a Nike billboard.
-
-**Channel Mix**
-3 channels with one-line activations each, formatted like:
-• Channel name — activation in one short line
-
-Keep total response under 180 words. No preamble, no caveats, no closing remarks. Just the brief.`;
-
-  try {
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }]
-      })
+    var cards = Array.prototype.slice.call(outEl.querySelectorAll(".variant"));
+    cards.forEach(function (card, i) {
+      setTimeout(function () {
+        card.classList.add("in");
+        typeOn(card.querySelector(".v-name"), card.querySelector(".v-name").getAttribute("data-type"));
+      }, i * 220);
     });
 
-    const data = await response.json();
-    const text = data.content.map(b => b.type === 'text' ? b.text : '').join('');
-
-    // Convert **Section** to styled headers
-    const formatted = text
-      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-      .trim();
-
-    outputEl.innerHTML = formatted;
-    statusEl.innerHTML = '✓ Generated by Claude · ' + new Date().toLocaleTimeString();
-  } catch (err) {
-    outputEl.innerHTML = '<strong>Error</strong>Something went wrong generating the brief. Try again.';
-    statusEl.textContent = 'Error: ' + err.message;
-  } finally {
-    generateBtn.disabled = false;
-    generateBtn.textContent = 'Generate ↗';
+    outEl.querySelectorAll(".v-copy").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var v = variants[+btn.getAttribute("data-copy")];
+        var txt = v.name + "\n\nTHE BIG IDEA\n" + v.idea + "\n\nHEADLINE\n" + v.headline +
+          "\n\nCHANNEL MIX\n" + v.channels.map(function (c) { return "- " + c; }).join("\n");
+        navigator.clipboard.writeText(txt).then(function () {
+          var t = btn.textContent; btn.textContent = "✓ Copied"; btn.style.color = "var(--accent)";
+          setTimeout(function () { btn.textContent = t; btn.style.color = ""; }, 1600);
+        });
+      });
+    });
   }
-});
-</script>
 
+  function typeOn(el, text) {
+    if (!allowMotion) { el.textContent = text; return; }
+    el.textContent = "";
+    var n = 0;
+    var iv = setInterval(function () {
+      n++;
+      el.textContent = text.slice(0, n);
+      if (n >= text.length) clearInterval(iv);
+    }, 26);
+  }
+
+  /* Fallback sample so a recruiter never sees a broken demo
+     (used only if the serverless API isn't reachable, e.g. opened as a raw file) */
+  function sampleText(p, a, ang) {
+    return [
+      "===VARIANT 1===",
+      "NAME: Landing Optional",
+      "IDEA: Wemby doesn't dunk — he visits. Frame " + p + " around the idea that gravity is a suggestion, told to " + a + " who already meme his hang time.",
+      "HEADLINE: He went up. He'll decide later.",
+      "CHANNELS:",
+      "- OOH — Paris + SA murals: a figure mid-rise, no rim in frame",
+      "- TikTok — 'landing optional' duet template with creator hoopers",
+      "- Nike App — drop unlock gated behind a vertical-leap mini-game",
+      "===VARIANT 2===",
+      "NAME: First Contact",
+      "IDEA: Lean the " + ang + " angle into a 'the alien has landed' arrival story. Treat the drop like a sighting, not a launch.",
+      "HEADLINE: Not from here. Built for here.",
+      "CHANNELS:",
+      "- Social — coordinated 'sighting' clips across EU + US time zones",
+      "- Print — GQ FR editorial: the arrival, shot like sci-fi",
+      "- Retail — flagship windows as a landing site at drop hour",
+      "===VARIANT 3===",
+      "NAME: The Long Game",
+      "IDEA: Position " + p + " as chapter one of a decade. Speak to " + a + " as witnesses to a generational arc, not buyers of a shoe.",
+      "HEADLINE: You'll tell people you saw this.",
+      "CHANNELS:",
+      "- Film — a 60s origin spot: eclipse, bismuth, the logo",
+      "- Owned — a living timeline in the Nike App, updated per game",
+      "- Community — youth clinics in FR + US under the same mark"
+    ].join("\n");
+  }
+
+  var busy = false;
+  function run() {
+    if (busy) return;
+    busy = true;
+    var product = document.getElementById("product").value;
+    var audience = document.getElementById("audience").value;
+    var angle = document.getElementById("angle").value;
+
+    genBtn.disabled = true; regenBtn.disabled = true;
+    genBtn.textContent = "Generating…";
+    outEl.innerHTML = "";
+    statusEl.innerHTML = "";
+    statusEl.className = "";
+    startThinking();
+
+    fetch(ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ product: product, audience: audience, angle: angle })
+    }).then(function (r) {
+      return r.json().then(function (j) { return { ok: r.ok, j: j }; });
+    }).then(function (res) {
+      if (!res.ok) throw new Error(res.j && res.j.error ? res.j.error : "Request failed");
+      var variants = parseVariants(res.j.text || "");
+      if (!variants.length) throw new Error("Could not parse the response");
+      stopThinking();
+      renderVariants(variants);
+      statusEl.textContent = "✓ Generated by Claude · " + new Date().toLocaleTimeString();
+    }).catch(function () {
+      // graceful demo fallback
+      stopThinking();
+      var variants = parseVariants(sampleText(product, audience, angle));
+      renderVariants(variants);
+      statusEl.innerHTML = '<span class="err">Sample output</span> — live API not connected (deploy on Netlify with ANTHROPIC_API_KEY to go live).';
+    }).then(function () {
+      busy = false;
+      genBtn.disabled = false; regenBtn.disabled = false;
+      genBtn.textContent = "Generate ↗";
+    });
+  }
+
+  genBtn.addEventListener("click", run);
+  regenBtn.addEventListener("click", run);
+})();
+</script>
 </body>
 </html>

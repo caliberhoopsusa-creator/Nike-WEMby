@@ -1,72 +1,101 @@
 # Project Wemby
 
-A strategic marketing showcase pitching how Nike activates Victor Wembanyama using AI. Built as an application piece for a Nike internship.
+An interactive marketing **system** showing how Nike activates Victor
+Wembanyama with AI — a live cultural signal engine and a working AI
+campaign co-pilot. Built as an application piece for a Nike internship.
 
-## Quick start
+## What's in it
 
-```bash
-# Just open it
-open index.html
-
-# Or serve it locally
-python3 -m http.server 8000
-# Then visit http://localhost:8000
-```
+- **Live Signal Engine** — a simulated real-time feed that ranks cultural
+  moments tied to Wemby (the "discovery" layer).
+- **Campaign Co-Pilot** — a real Anthropic-powered tool that returns
+  **three distinct strategic directions** from a brief, with a streamed
+  reveal and copy-to-clipboard. The API key stays server-side.
+- Editorial dark design, the small hero shot treated as an intentional
+  framed plate, refined motion (staggered hero, parallax, scroll reveals).
 
 ## Project structure
 
 ```
 .
-├── CLAUDE.md           ← Briefing for Claude Code (read this first)
-├── README.md           ← You are here
-├── index.html          ← The site
-└── public/
-    └── wemby-hero.png  ← Hero image
+├── index.html                  ← The site (single file)
+├── config.js                   ← EDIT ME: your name, email, links
+├── netlify.toml                ← Netlify config (functions + redirect)
+├── netlify/functions/
+│   └── generate.js             ← Serverless Anthropic proxy (key hidden)
+├── public/wemby-hero.png       ← Hero image
+├── README.md                   ← You are here
+└── CLAUDE.md                   ← Original briefing
 ```
 
-## Working on this with Claude Code
+## Before you send it anywhere
 
-1. Open this folder in your terminal
-2. Run `claude` (Claude Code CLI)
-3. Tell it: *"Read CLAUDE.md and let's start."*
+1. **Edit `config.js`** — replace the placeholder email, LinkedIn, and
+   Caliber links with your real ones. The footer/title update automatically.
+2. **Deploy with the API key set** (below). Until then the generator shows
+   a built-in *sample* output so it never looks broken — but for the real
+   "wow" it needs to be live.
 
-Claude Code will pick up the full context and we can iterate from there.
+## Run it locally
 
-## Current state
+Plain preview (signal engine works; generator falls back to sample output):
 
-- Single-file HTML site, no build step
-- Uses Google Fonts (loaded via CDN)
-- AI generator currently calls the Anthropic API directly from the browser — **fine for local development, needs a serverless proxy for production**
-
-## Next steps (rough order)
-
-1. Elevate the visual design (the main ask — see CLAUDE.md)
-2. Set up a serverless function to safely call the Anthropic API
-3. Deploy to Vercel or Netlify
-4. Replace placeholder contact info at the bottom of `index.html`
-5. Consider a higher-res hero image
-
-## Deploy options
-
-### Vercel
 ```bash
-npm i -g vercel
-vercel
+python3 -m http.server 8000
+# http://localhost:8000
 ```
 
-### Netlify
+Full local run **with the live AI generator** (recommended before sending):
+
 ```bash
-# Drag and drop the folder at app.netlify.com
-# Or use the CLI:
+npm i -g netlify-cli
+export ANTHROPIC_API_KEY=sk-ant-...      # your key, kept local
+netlify dev
+# http://localhost:8888  → the Co-Pilot now calls the real API
+```
+
+## Deploy (Netlify)
+
+```bash
 npm i -g netlify-cli
 netlify deploy --prod
 ```
 
-Both will give you a free URL like `project-wemby.vercel.app`. Custom domain optional but worth it.
+Then set the API key so the serverless function can use it (it is **never**
+exposed to the browser):
+
+- Netlify dashboard → **Site settings → Environment variables**
+- Add `ANTHROPIC_API_KEY` = your Anthropic key
+- Trigger a redeploy (`netlify deploy --prod` again, or push to the repo)
+
+You can also do it from the CLI:
+
+```bash
+netlify env:set ANTHROPIC_API_KEY sk-ant-...
+netlify deploy --prod
+```
+
+You'll get a free URL like `project-wemby.netlify.app`. Custom domain
+optional but worth it for a recruiter link.
+
+### How the proxy works
+
+The browser calls `/.netlify/functions/generate` (alias `/api/generate`)
+with just the three dropdown values. The function builds the prompt,
+calls the Anthropic API with the secret key from `ANTHROPIC_API_KEY`, and
+returns only the text. The key never reaches the client.
+
+To change the model, edit `MODEL` at the top of
+`netlify/functions/generate.js` (currently `claude-sonnet-4-6`).
 
 ## Notes for Merk
 
-- The AI generator is the moment of the site — make sure it works flawlessly before sending to anyone
-- Test on mobile before sending — Nike people open links on their phones
-- Don't send this anywhere with the placeholder email at the bottom still in place
-- Consider adding a small analytics snippet (Plausible, Fathom) so you know if someone from Nike actually opens it
+- The Co-Pilot is the moment of the site — deploy with the key set and
+  click Generate a few times before sending to anyone.
+- Test on mobile — Nike people open links on their phones. Layout stacks
+  to one column and the signal feed simplifies on small screens.
+- Don't send it with the placeholder links in `config.js` still in place.
+- Consider a privacy-light analytics snippet (Plausible, Fathom) so you
+  know if someone from Nike actually opens it.
+- A higher-res hero image would let us go bigger later, but the framed
+  "plate" treatment is deliberate and works at the current resolution.
