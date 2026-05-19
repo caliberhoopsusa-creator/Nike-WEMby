@@ -124,7 +124,7 @@ body.nav-open { overflow: hidden; }
 .nav-open .nav-toggle span:nth-child(2) { opacity: 0; }
 .nav-open .nav-toggle span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-/* ─── HERO (cinematic full-bleed) ─── */
+/* ─── HERO (editorial full-bleed) ─── */
 .hero {
   position: relative;
   min-height: 100vh;
@@ -132,71 +132,59 @@ body.nav-open { overflow: hidden; }
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
-  padding: 7rem 2.5rem 3.5rem;
+  padding: 7rem 2.5rem 4rem;
   overflow: hidden;
   isolation: isolate;
-  background:
-    radial-gradient(74% 80% at 80% 15%, rgba(255,124,40,0.95) 0%, rgba(255,69,0,0.42) 38%, rgba(20,8,2,0) 65%),
-    linear-gradient(155deg, #2E1004 0%, #170A03 52%, #0A0503 100%);
+  background: linear-gradient(155deg, #2E1004 0%, #170A03 52%, #0A0503 100%);
 }
 .hero-photo {
-  position: absolute;
-  top: 0; right: 0; bottom: 0;
-  width: min(58vw, 740px);
+  position: absolute; inset: 0;
   z-index: -2;
-  display: flex; align-items: center; justify-content: flex-end;
-  -webkit-mask-image: linear-gradient(100deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 13%, #000 42%, #000 100%);
-          mask-image: linear-gradient(100deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 13%, #000 42%, #000 100%);
 }
 .hero-photo img {
-  height: 116%;
-  width: auto;
+  width: 100%; height: 100%;
   object-fit: cover;
+  object-position: 70% 26%;
   image-rendering: auto;
-  filter: saturate(1.18) contrast(1.05);
-  /* Crops the Instagram carousel UI: side arrows + bottom dots.
-     If a sliver of UI still shows on your screenshot, raise these %. */
-  clip-path: inset(2.5% 6.5% 8% 6.5%);
-  transform: scale(1.18);
-  transform-origin: 62% 44%;
+  filter: saturate(1.12) contrast(1.04);
 }
 .hero-photo::after {
   content: '';
   position: absolute; inset: 0;
   background: var(--accent);
   mix-blend-mode: color;
-  opacity: 0.34;
+  opacity: 0.12;
 }
 .hero-streak {
   position: absolute; right: 0; z-index: -2;
   height: 2px; width: min(46vw, 620px);
-  background: linear-gradient(90deg, transparent 0%, rgba(255,180,120,0.45) 60%, rgba(255,255,255,0.5) 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(255,180,120,0.4) 60%, rgba(255,255,255,0.45) 100%);
   filter: blur(1.6px);
   pointer-events: none;
   animation: streak 7s ease-in-out infinite;
 }
-.hs1 { top: 30%; animation-delay: 0s; }
-.hs2 { top: 47%; width: min(38vw,520px); animation-delay: 1.7s; }
-.hs3 { top: 63%; width: min(52vw,680px); animation-delay: 3.3s; }
+.hs1 { top: 24%; animation-delay: 0s; }
+.hs2 { top: 40%; width: min(38vw,520px); animation-delay: 1.7s; }
+.hs3 { top: 56%; width: min(52vw,680px); animation-delay: 3.3s; }
 @keyframes streak {
   0%,100% { transform: translateX(0); opacity: 0; }
-  18% { opacity: 0.5; }
-  60% { transform: translateX(-44px); opacity: 0.18; }
+  18% { opacity: 0.45; }
+  60% { transform: translateX(-44px); opacity: 0.16; }
   82%,100% { opacity: 0; }
 }
 .hero-grain {
   position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  opacity: 0.11; mix-blend-mode: overlay;
+  opacity: 0.10; mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='hn'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23hn)'/%3E%3C/svg%3E");
 }
 .hero-scrim {
   position: absolute; inset: 0; z-index: -1; pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(10,5,3,0.5) 0%, rgba(10,5,3,0) 28%, rgba(10,5,3,0.12) 60%, rgba(8,4,2,0.82) 100%),
-    linear-gradient(90deg, rgba(8,4,2,0.8) 0%, rgba(8,4,2,0.22) 44%, rgba(8,4,2,0) 72%);
+    linear-gradient(180deg, rgba(8,4,2,0.55) 0%, rgba(8,4,2,0) 24%, rgba(8,4,2,0.10) 48%, rgba(6,3,1,0.90) 100%),
+    linear-gradient(95deg, rgba(6,3,1,0.86) 0%, rgba(6,3,1,0.40) 32%, rgba(6,3,1,0) 62%);
 }
 .hero-kicker {
-  position: absolute; top: 7rem; left: 2.5rem; z-index: 2;
+  position: absolute; top: 6.5rem; left: 2.5rem; z-index: 2;
   font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.28em;
   text-transform: uppercase; color: #FFD7BE;
   display: flex; align-items: center; gap: 0.75rem;
@@ -208,11 +196,12 @@ body.nav-open { overflow: hidden; }
 }
 .hero-head {
   font-family: var(--display);
-  font-size: clamp(3.4rem, 11.5vw, 10.5rem);
-  line-height: 0.78; letter-spacing: -0.005em;
-  color: #FFFFFF; text-align: right;
-  margin-bottom: 2.5rem;
-  text-shadow: 0 2px 44px rgba(0,0,0,0.4);
+  font-size: clamp(2.6rem, 7vw, 6rem);
+  line-height: 0.88; letter-spacing: -0.005em;
+  color: #FFFFFF; text-align: left;
+  max-width: 16ch;
+  margin-bottom: 1.75rem;
+  text-shadow: 0 2px 34px rgba(0,0,0,0.5);
 }
 .hero-head .ln { display: block; overflow: hidden; }
 .hero-head .ln > span {
@@ -613,9 +602,9 @@ footer {
 /* ─── RESPONSIVE ─── */
 @media (max-width: 1024px) {
   .hero { padding: 6.5rem 1.5rem 3rem; }
-  .hero-photo { width: 80vw; }
+  .hero-photo { width: 100%; }
   .hero-kicker { left: 1.5rem; }
-  .hero-head { text-align: left; font-size: clamp(3.4rem, 13vw, 7.5rem); }
+  .hero-head { text-align: left; font-size: clamp(2.4rem, 8.5vw, 4.6rem); }
   .scroll-hint { right: 1.5rem; }
   .span-5,.span-7,.span-4,.span-8,.span-6 { grid-column: span 12; }
   .brief-grid { grid-template-columns: 1fr; gap: 2rem; }
@@ -644,11 +633,12 @@ footer {
   .nav-links a { color: var(--text); font-family: var(--display); }
   .nav-open .nav-links { opacity: 1; pointer-events: auto; transform: none; }
   section { padding: 4.5rem 1.25rem; }
-  .hero { padding: 6rem 1.25rem 2.5rem; min-height: 94vh; }
-  .hero-photo { width: 105vw; }
+  .hero { padding: 6rem 1.25rem 2.5rem; min-height: 100dvh; }
+  .hero-photo { width: 100%; }
+  .hero-photo img { object-position: 58% 18%; }
   .hero-kicker { top: 5.5rem; left: 1.25rem; }
-  .hero-head { font-size: clamp(3rem, 17vw, 5.5rem); margin-bottom: 2rem; }
-  .hero-line { font-size: 1.15rem; }
+  .hero-head { font-size: clamp(2.1rem, 10vw, 3.4rem); margin-bottom: 1.6rem; max-width: 20ch; }
+  .hero-line { font-size: 1.12rem; }
   .gen-wrap { padding: 1.5rem; }
   .scroll-hint { display: none; }
   .signal-head .right { gap: 1rem; }
