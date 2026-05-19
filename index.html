@@ -451,7 +451,23 @@ section { padding: 6.5rem 2rem; position: relative; max-width: var(--maxw); marg
   font-family: var(--serif); font-style: italic; color: var(--muted);
   font-size: 1.12rem; text-align: center;
 }
-.variants { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.variants {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  grid-auto-rows: 1fr;
+  gap: 1rem;
+}
+.variant:first-child {
+  grid-row: span 2;
+  background: linear-gradient(176deg, var(--surface-2) 0%, var(--bg-2) 100%);
+  border-top-width: 3px;
+  padding: 2.25rem;
+}
+.variant:first-child .v-num { color: var(--accent); }
+.variant:first-child .v-name { font-size: clamp(2.4rem, 3.4vw, 3.4rem); margin-bottom: 1.4rem; }
+.variant:first-child .v-idea { font-size: 1.02rem; }
+.variant:first-child .v-headline { font-size: 1.7rem; }
+.variant:first-child .v-k { color: var(--accent); }
 .variant {
   background: var(--surface); border: 0.5px solid var(--border);
   border-top: 2px solid var(--accent);
@@ -605,6 +621,8 @@ footer {
   .brief-grid { grid-template-columns: 1fr; gap: 2rem; }
   .gen-controls { grid-template-columns: 1fr; }
   .variants { grid-template-columns: 1fr; }
+  .variant:first-child { grid-row: auto; padding: 1.75rem; }
+  .variant:first-child .v-name { font-size: clamp(2.1rem, 7vw, 2.6rem); }
   .mockups { grid-template-columns: 1fr; }
   .signal-row { grid-template-columns: 80px 1fr 84px; }
   .sig-region, .sig-time { display: none; }
@@ -1398,7 +1416,7 @@ footer {
   function renderVariants(variants) {
     outEl.innerHTML = '<div class="variants">' + variants.map(function (v, i) {
       return '<div class="variant" data-i="' + i + '">' +
-        '<div class="v-num"><span>Direction 0' + (i + 1) + '</span><span>Wemby</span></div>' +
+        '<div class="v-num"><span>' + (i === 0 ? 'Lead direction' : 'Direction 0' + (i + 1)) + '</span><span>' + (i === 0 ? 'Recommended' : 'Wemby') + '</span></div>' +
         '<div class="v-name" data-type="' + esc(v.name) + '"></div>' +
         '<div class="v-field"><div class="v-k">The Big Idea</div><div class="v-idea">' + esc(v.idea) + '</div></div>' +
         '<div class="v-field"><div class="v-k">Billboard Headline</div><div class="v-headline">' + esc(v.headline) + '</div></div>' +
