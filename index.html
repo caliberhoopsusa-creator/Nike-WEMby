@@ -144,16 +144,17 @@ body.nav-open { overflow: hidden; }
 .hero-photo img {
   width: 100%; height: 100%;
   object-fit: cover;
-  object-position: 70% 26%;
+  object-position: 76% 14%;
   image-rendering: auto;
-  filter: saturate(1.12) contrast(1.04);
+  filter: contrast(1.07) brightness(1.02);
 }
+/* B&W hero — orange wash off so it stays crisp. Raise opacity for a duotone. */
 .hero-photo::after {
   content: '';
   position: absolute; inset: 0;
   background: var(--accent);
   mix-blend-mode: color;
-  opacity: 0.12;
+  opacity: 0;
 }
 .hero-streak {
   position: absolute; right: 0; z-index: -2;
@@ -635,7 +636,7 @@ footer {
   section { padding: 4.5rem 1.25rem; }
   .hero { padding: 6rem 1.25rem 2.5rem; min-height: 100dvh; }
   .hero-photo { width: 100%; }
-  .hero-photo img { object-position: 58% 18%; }
+  .hero-photo img { object-position: 70% 8%; }
   .hero-kicker { top: 5.5rem; left: 1.25rem; }
   .hero-head { font-size: clamp(2.1rem, 10vw, 3.4rem); margin-bottom: 1.6rem; max-width: 20ch; }
   .hero-line { font-size: 1.12rem; }
@@ -758,7 +759,7 @@ footer {
 <!-- ─── HERO ─── -->
 <header class="hero" id="hero">
   <div class="hero-photo" id="hero-photo">
-    <img src="public/wemby-dunk.jpg" alt="Victor Wembanyama rising for a dunk against an orange backdrop"
+    <img src="public/wemby-portrait.jpg" alt="Victor Wembanyama — black-and-white portrait"
          onerror="this.onerror=null;this.src='public/wemby-hero.png'" />
   </div>
   <span class="hero-streak hs1"></span>
@@ -1037,8 +1038,8 @@ footer {
 <!-- ─── BUILDER ─── -->
 <div class="builder-note" id="about">
   <figure class="builder-photo">
-    <img src="public/wemby-portrait.jpg"
-         alt="Victor Wembanyama — portrait"
+    <img src="public/wemby-dunk.jpg"
+         alt="Victor Wembanyama for Nike"
          onerror="this.onerror=null;this.closest('figure').style.display='none'" />
   </figure>
   <div class="builder-inner">
