@@ -127,11 +127,16 @@ nav {
           mask-image: linear-gradient(100deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 13%, #000 42%, #000 100%);
 }
 .hero-photo img {
-  height: 95%;
+  height: 116%;
   width: auto;
   object-fit: cover;
   image-rendering: auto;
-  filter: saturate(1.22) contrast(1.05) blur(0.6px);
+  filter: saturate(1.18) contrast(1.05);
+  /* Crops the Instagram carousel UI: side arrows + bottom dots.
+     If a sliver of UI still shows on your screenshot, raise these %. */
+  clip-path: inset(2.5% 6.5% 8% 6.5%);
+  transform: scale(1.18);
+  transform-origin: 62% 44%;
 }
 .hero-photo::after {
   content: '';
@@ -602,6 +607,70 @@ footer {
   .fade-in { opacity: 1; transform: none; }
   .variant { opacity: 1; transform: none; }
 }
+
+/* ─── IMAGERY ADDED ACROSS THE PLATFORM ─── */
+/* .ig crops the Instagram carousel chrome (side arrows + bottom dots)
+   with pure CSS — no image editing. Only needed for the screenshots
+   that still have the IG UI baked in (#1 dunk, #2 AIR). The clean
+   poster/portrait don't use it. Nudge the scale up if any UI shows. */
+.ig { overflow: hidden; position: relative; }
+.ig > img {
+  display: block; width: 100%; height: 100%;
+  object-fit: cover;
+  transform: scale(1.15);
+  transform-origin: 50% 45%;
+}
+
+.editorial-band {
+  position: relative; max-width: none; margin: 0; padding: 0;
+  border-top: 0.5px solid var(--border);
+  border-bottom: 0.5px solid var(--border);
+  background: #0A0503; overflow: hidden;
+}
+.editorial-band img {
+  display: block; width: 100%; height: auto;
+  filter: contrast(1.04) saturate(1.05);
+}
+.editorial-band figcaption {
+  display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+  padding: 1rem 2rem; border-top: 0.5px solid var(--border);
+  font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--muted);
+}
+.editorial-band figcaption .accent { color: var(--accent); }
+.editorial-band .ig { aspect-ratio: 21 / 9; width: 100%; }
+.editorial-band .ig > img { filter: contrast(1.04) saturate(1.08); }
+@media (max-width: 768px) { .editorial-band .ig { aspect-ratio: 4 / 3; } }
+
+.builder-photo {
+  max-width: 1180px; margin: 0 auto 3.5rem; aspect-ratio: 21 / 9;
+  border: 0.5px solid var(--border); overflow: hidden;
+}
+.builder-photo img {
+  display: block; width: 100%; height: 100%;
+  object-fit: cover; object-position: 50% 30%;
+  filter: grayscale(0.12) contrast(1.06);
+}
+
+.shoe-detail {
+  margin-top: 1.75rem; aspect-ratio: 16 / 9;
+  border: 0.5px solid var(--border-2); overflow: hidden; position: relative;
+}
+.shoe-detail img {
+  width: 100%; height: 100%; object-fit: cover;
+  object-position: 50% 92%; transform: scale(1.55);
+  transform-origin: 50% 92%;
+}
+.shoe-detail figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 0.7rem 0.95rem;
+  font-family: var(--mono); font-size: 0.58rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--text);
+  background: linear-gradient(0deg, rgba(0,0,0,0.72), rgba(0,0,0,0));
+}
+@media (max-width: 1024px) {
+  .builder-photo { aspect-ratio: 16 / 10; }
+}
 </style>
 </head>
 <body>
@@ -624,7 +693,8 @@ footer {
 <!-- ─── HERO ─── -->
 <header class="hero" id="hero">
   <div class="hero-photo" id="hero-photo">
-    <img src="public/wemby-hero.png" alt="Victor Wembanyama mid-flight against an orange backdrop" />
+    <img src="public/wemby-dunk.jpg" alt="Victor Wembanyama rising for a dunk against an orange backdrop"
+         onerror="this.onerror=null;this.src='public/wemby-hero.png'" />
   </div>
   <span class="hero-streak hs1"></span>
   <span class="hero-streak hs2"></span>
@@ -685,6 +755,11 @@ footer {
       <div class="card-num">/ 02 — The opportunity</div>
       <div class="card-title">Wemby is a story, not a shoe.</div>
       <p class="card-body">The Alien logo unveiled on the April 8, 2024 total solar eclipse. The bismuth stone from draft night. The GT Hustle 2 "Alien". The Paris A.I.R. sci-fi prototype. Nike has built more world around Wembanyama than any rookie since LeBron — but campaign-by-campaign. AI makes it <em>always-on</em>: surfacing micro-moments fans recognize as Nike-shaped before competitors register them.</p>
+      <figure class="shoe-detail">
+        <img src="public/wemby-dunk.jpg" alt="GT Hustle on court — detail"
+             onerror="this.onerror=null;this.closest('figure').style.display='none'" />
+        <figcaption>The shoe is the artifact — the story is the system</figcaption>
+      </figure>
     </div>
     <div class="insight-card span-4 fade-in">
       <div class="card-num">/ 03</div>
@@ -709,6 +784,17 @@ footer {
   </div>
 </section>
 
+<!-- ─── EDITORIAL BAND ─── -->
+<figure class="editorial-band">
+  <img src="public/wemby-dream.jpg"
+       alt="Victor Wembanyama for Nike — “My dream is to end theirs.”"
+       onerror="this.onerror=null;this.closest('figure').style.display='none'" />
+  <figcaption>
+    <span>Victor Wembanyama · Nike Basketball</span>
+    <span class="accent">The story the system is built to scale</span>
+  </figcaption>
+</figure>
+
 <!-- ─── SIGNAL ENGINE ─── -->
 <section id="signals">
   <div class="section-label">02 — Live: Cultural Signal Engine</div>
@@ -730,6 +816,19 @@ footer {
     <div class="signal-foot">Demonstration feed — illustrative signals, not live data. The production architecture is in section 04.</div>
   </div>
 </section>
+
+<!-- ─── EDITORIAL BAND · AIR ─── -->
+<figure class="editorial-band">
+  <div class="ig">
+    <img src="public/wemby-air.jpg"
+         alt="Victor Wembanyama — Nike Air"
+         onerror="this.onerror=null;this.closest('figure').style.display='none'" />
+  </div>
+  <figcaption>
+    <span>A.I.R. · Wembanyama</span>
+    <span class="accent">From a $100M signing to an always-on story</span>
+  </figcaption>
+</figure>
 
 <!-- ─── CO-PILOT (GENERATOR) ─── -->
 <section id="generator">
@@ -872,6 +971,11 @@ footer {
 
 <!-- ─── BUILDER ─── -->
 <div class="builder-note" id="about">
+  <figure class="builder-photo">
+    <img src="public/wemby-portrait.jpg"
+         alt="Victor Wembanyama — portrait"
+         onerror="this.onerror=null;this.closest('figure').style.display='none'" />
+  </figure>
   <div class="builder-inner">
     <div class="section-label">05 — The Builder</div>
     <h2>Built by someone who'd <span class="italic">love to do this<br>full-time.</span></h2>
