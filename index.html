@@ -11,7 +11,7 @@
 <meta property="og:type" content="website" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #090807;
@@ -26,9 +26,10 @@
   --accent: #FF6B1A;
   --accent-2: #FF4500;
   --accent-soft: rgba(255,107,26,0.12);
-  --display: 'Bebas Neue', sans-serif;
+  --display: 'Bebas Neue', 'Anton', sans-serif;
+  --display-heavy: 'Anton', 'Bebas Neue', sans-serif; /* swap into .hero-head for a heavier Nike-poster headline */
   --serif: 'Instrument Serif', serif;
-  --body: 'Inter', sans-serif;
+  --body: 'Jost', 'Futura', 'Century Gothic', system-ui, sans-serif; /* Jost = closest free Futura, Nike's brand typeface */
   --mono: 'JetBrains Mono', monospace;
   --maxw: 1400px;
 }
@@ -706,10 +707,10 @@ footer {
 
   <div class="hero-content">
     <h1 class="hero-head">
-      <span class="ln"><span style="transition-delay:.06s">Sign the</span></span>
-      <span class="ln"><span style="transition-delay:.16s">alien.</span></span>
-      <span class="ln"><span class="italic" style="transition-delay:.30s">Then run</span></span>
-      <span class="ln"><span class="italic" style="transition-delay:.40s">the system.</span></span>
+      <span class="ln"><span style="transition-delay:.06s">Signing him</span></span>
+      <span class="ln"><span style="transition-delay:.16s">was easy.</span></span>
+      <span class="ln"><span class="italic" style="transition-delay:.30s">Owning the</span></span>
+      <span class="ln"><span class="italic" style="transition-delay:.40s">decade isn't.</span></span>
     </h1>
     <div class="hero-foot">
       <div class="sys-readout">
@@ -720,7 +721,7 @@ footer {
         <span class="sr-sep">·</span>
         <span>Co-Pilot ready</span>
       </div>
-      <p class="hero-line">A working AI system that turns a <em>$100M signing</em> into the defining athlete story of the decade.</p>
+      <p class="hero-line">Nike won the <em>$100M</em> signing. This is the AI system that wins the <em>decade</em>.</p>
       <a href="#generator" class="hero-cta">Run the Co-Pilot <span>»</span></a>
     </div>
   </div>
