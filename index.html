@@ -1169,25 +1169,65 @@ footer {
     'Nike Training Club AI Coach': 'the NTC AI coach'
   };
   var PCHAN = {
-    'GT Hustle 3 "Alien"': 'Retail — drop staged like the eclipse reveal, midnight unlock in the Nike App',
-    'Nike Air signature drop': 'Nike App — Air signature waitlist with a personalized unlock film',
-    'Nike Run Club — Wemby Edition': "NRC — a guided run series paced to his 7'4\" stride",
-    'Wemby × Nike SB streetwear': 'Retail — SB capsule seeded through skate shops before any ad runs',
-    'Nike Training Club AI Coach': 'NTC — an AI drill set modeled on his block timing'
+    'GT Hustle 3 "Alien"': [
+      'Retail — drop staged like the eclipse reveal, midnight unlock in the Nike App',
+      'OOH — the “Alien” colorway shown as a glyph before it is a shoe',
+      'Owned — an unlock gated behind a passcode hidden in his game footage'
+    ],
+    'Nike Air signature drop': [
+      'Nike App — Air signature waitlist with a personalized unlock film',
+      'Retail — first pairs only at flagships, by appointment',
+      'Film — the Air line revealed the way the logo was, as an event'
+    ],
+    'Nike Run Club — Wemby Edition': [
+      "NRC — a guided run series paced to his 7'4\" stride",
+      'NRC — a “catch him” virtual race against his real split times',
+      'Owned — training logs that unlock chapters of his story'
+    ],
+    'Wemby × Nike SB streetwear': [
+      'Retail — SB capsule seeded through skate shops before any ad runs',
+      'Community — a numbered deck-and-jersey set, no restock',
+      'OOH — pasted-poster run in skate districts, Paris and New York'
+    ],
+    'Nike Training Club AI Coach': [
+      'NTC — an AI drill set modeled on his block timing',
+      'NTC — a “guard skills at 7′4″” program built from his workouts',
+      'Owned — an in-app coach that talks in his cadence'
+    ]
   };
   var AUDS = {
-    'Gen Z hoopers (14–22, US)': 'Built for Gen Z to remix, not just watch.',
-    'European basketball fans (FR + global)': 'Land it in Paris first; let the US catch up.',
-    'Sneakerheads / streetwear collectors': 'Let scarcity and craft do the talking.',
-    'Sci-fi & gaming culture overlap': 'Treat the lore as canon.',
-    'Aspiring young athletes (10–14)': 'Speak to the kid who wants to be him.'
+    'Gen Z hoopers (14–22, US)': ['Built for Gen Z to remix, not just watch.', 'Make it theirs before it is an ad.', 'Earn the repost; skip the pitch.'],
+    'European basketball fans (FR + global)': ['Land it in Paris first; let the US catch up.', 'Speak French to the world, not just to France.', 'Win Europe and the globe follows.'],
+    'Sneakerheads / streetwear collectors': ['Let scarcity and craft do the talking.', 'Make provenance the product.', 'Restraint is the marketing.'],
+    'Sci-fi & gaming culture overlap': ['Treat the lore as canon.', 'Reward the people who decode it.', 'Build a universe, not an ad.'],
+    'Aspiring young athletes (10–14)': ['Speak to the kid who wants to be him.', 'Make being early feel like belonging.', 'Coach them; do not sell to them.']
   };
   var ACHAN = {
-    'Gen Z hoopers (14–22, US)': 'Social — TikTok duet template; court takeovers in ATL and LA before media',
-    'European basketball fans (FR + global)': 'EU — bilingual FR/EN cut, Paris and Bercy out-of-home takeover',
-    'Sneakerheads / streetwear collectors': 'Community — numbered pairs, raffle, IRL reveal at flagships',
-    'Sci-fi & gaming culture overlap': 'Gaming — Discord drop and Twitch reveal with an in-game cosmetic',
-    'Aspiring young athletes (10–14)': 'Grassroots — school and youth-clinic tour across France and the US'
+    'Gen Z hoopers (14–22, US)': [
+      'Social — TikTok duet template; court takeovers in ATL and LA before media',
+      'Social — a stitchable block-edit, creators first, ads never',
+      'Community — park runs in five US cities, no logos until the end'
+    ],
+    'European basketball fans (FR + global)': [
+      'EU — bilingual FR/EN cut, Paris and Bercy out-of-home takeover',
+      'EU — a Paris launch night; the US wakes up to it done',
+      'Press — a French-title editorial before any US placement'
+    ],
+    'Sneakerheads / streetwear collectors': [
+      'Community — numbered pairs, raffle, IRL reveal at flagships',
+      'Retail — no images pre-drop, only a release time',
+      'Owned — provenance cards; every pair traceable to a game'
+    ],
+    'Sci-fi & gaming culture overlap': [
+      'Gaming — Discord drop and Twitch reveal with an in-game cosmetic',
+      'Gaming — a playable “first contact” short on a game engine',
+      'Owned — lore pages written like canon, updated per game'
+    ],
+    'Aspiring young athletes (10–14)': [
+      'Grassroots — school and youth-clinic tour across France and the US',
+      'Community — a “be early” kit for school teams',
+      'Owned — a kid-mode app path with his drills, simplified'
+    ]
   };
   var ANGLES = {
     'Otherworldly / Extraterrestrial': {
@@ -1244,19 +1284,27 @@ footer {
     }
     return a;
   }
+  function rot(arr, i, off) {
+    if (!arr || !arr.length) return '';
+    return arr[(i + off) % arr.length];
+  }
   function buildVariants(product, audience, angle) {
     var set = ANGLES[angle] || ANGLES['Otherworldly / Extraterrestrial'];
     var pnoun = PNOUN[product] || product;
-    var auds = AUDS[audience] || '';
+    var audsArr = AUDS[audience] || [''];
+    var pchan = PCHAN[product] || [product];
+    var achan = ACHAN[audience] || [audience];
     var pool = shuffle(set.pool);
+    var off = Math.floor(Math.random() * 3);
     return shuffle(set.c).slice(0, 3).map(function (c, i) {
-      var idea = (c.i.replace('{p}', pnoun) + (auds ? ' ' + auds : ''))
+      var tail = rot(audsArr, i, off);
+      var idea = (c.i.replace('{p}', pnoun) + (tail ? ' ' + tail : ''))
         .replace(/(^|[.!?]\s+)([a-z])/g, function (m, a, b) { return a + b.toUpperCase(); });
       return {
         name: c.n,
         idea: idea,
         headline: c.h[Math.floor(Math.random() * c.h.length)],
-        channels: [pool[i % pool.length], PCHAN[product] || product, ACHAN[audience] || audience]
+        channels: [pool[i % pool.length], rot(pchan, i, off), rot(achan, i, off)]
       };
     });
   }
