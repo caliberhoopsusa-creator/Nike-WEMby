@@ -1,101 +1,82 @@
 # Project Wemby
 
 An interactive marketing **system** showing how Nike activates Victor
-Wembanyama with AI — a live cultural signal engine and a working AI
+Wembanyama with AI — a live cultural signal engine and a working
 campaign co-pilot. Built as an application piece for a Nike internship.
 
 ## What's in it
 
 - **Live Signal Engine** — a simulated real-time feed that ranks cultural
   moments tied to Wemby (the "discovery" layer).
-- **Campaign Co-Pilot** — a real Anthropic-powered tool that returns
-  **three distinct strategic directions** from a brief, with a streamed
-  reveal and copy-to-clipboard. The API key stays server-side.
-- Editorial dark design, the small hero shot treated as an intentional
-  framed plate, refined motion (staggered hero, parallax, scroll reveals).
+- **Campaign Co-Pilot** — an in-browser generation engine that returns
+  **three distinct strategic directions** from a brief (Product ×
+  Audience × Angle), with a "thinking" sequence, staggered reveal,
+  type-on, copy-to-clipboard, and a working "Regenerate alternatives."
+  No API, no key, no server — it cannot break and works offline.
+- Editorial dark design, Futura-style type (Jost), cinematic hero,
+  refined motion (staggered hero, parallax, scroll reveals).
 
 ## Project structure
 
 ```
 .
-├── index.html                  ← The site (single file)
-├── config.js                   ← EDIT ME: your name, email, links
-├── netlify.toml                ← Netlify config (functions + redirect)
-├── netlify/functions/
-│   └── generate.js             ← Serverless Anthropic proxy (key hidden)
-├── public/wemby-hero.png       ← Hero image
-├── README.md                   ← You are here
-└── CLAUDE.md                   ← Original briefing
+├── index.html        ← The whole site + the generation engine
+├── config.js         ← EDIT ME: your name, email, links
+├── netlify.toml      ← Minimal static-site config
+├── public/           ← Images (add the hi-res photos here)
+├── README.md         ← You are here
+└── CLAUDE.md         ← Original briefing
 ```
 
 ## Before you send it anywhere
 
 1. **Edit `config.js`** — replace the placeholder email, LinkedIn, and
-   Caliber links with your real ones. The footer/title update automatically.
-2. **Deploy with the API key set** (below). Until then the generator shows
-   a built-in *sample* output so it never looks broken — but for the real
-   "wow" it needs to be live.
+   Caliber links with your real ones. Footer/title update automatically.
+   Until then those links are auto-disabled (no dead links shipped).
+2. **Add the photos** to `public/` with these names, or the hero falls
+   back to the small original image and the photo bands stay hidden:
+   `wemby-dunk.jpg`, `wemby-dream.jpg`, `wemby-portrait.jpg`,
+   `wemby-air.jpg`.
 
-## Run it locally
+## See it locally (no tools, no accounts)
 
-Plain preview (signal engine works; generator falls back to sample output):
+The site is fully static — the Co-Pilot runs in the browser.
 
-```bash
-python3 -m http.server 8000
-# http://localhost:8000
-```
+- **Simplest:** double-click `index.html`. That's the whole site.
+- Or serve it: `python3 -m http.server 8000` → http://localhost:8000
 
-Full local run **with the live AI generator** (recommended before sending):
+Everything works the same way offline as deployed: the generator
+produces a different, specific brief for every Product × Audience ×
+Angle combination, and Regenerate gives fresh alternatives.
 
-```bash
-npm i -g netlify-cli
-export ANTHROPIC_API_KEY=sk-ant-...      # your key, kept local
-netlify dev
-# http://localhost:8888  → the Co-Pilot now calls the real API
-```
+## Deploy
 
-## Deploy (Netlify)
+Any static host works (Netlify, GitHub Pages, Vercel, etc.) — there is
+no build step and no server.
 
-```bash
-npm i -g netlify-cli
-netlify deploy --prod
-```
+- **Netlify:** connect the repo (or `netlify deploy --prod`). `netlify.toml`
+  already sets the publish directory. No environment variables needed.
+- **GitHub Pages:** Settings → Pages → Deploy from branch → root.
 
-Then set the API key so the serverless function can use it (it is **never**
-exposed to the browser):
-
-- Netlify dashboard → **Site settings → Environment variables**
-- Add `ANTHROPIC_API_KEY` = your Anthropic key
-- Trigger a redeploy (`netlify deploy --prod` again, or push to the repo)
-
-You can also do it from the CLI:
-
-```bash
-netlify env:set ANTHROPIC_API_KEY sk-ant-...
-netlify deploy --prod
-```
-
-You'll get a free URL like `project-wemby.netlify.app`. Custom domain
+You'll get a free URL like `your-site.netlify.app`. Custom domain
 optional but worth it for a recruiter link.
 
-### How the proxy works
+### About the Co-Pilot (be accurate if asked)
 
-The browser calls `/.netlify/functions/generate` (alias `/api/generate`)
-with just the three dropdown values. The function builds the prompt,
-calls the Anthropic API with the secret key from `ANTHROPIC_API_KEY`, and
-returns only the text. The key never reaches the client.
-
-To change the model, edit `MODEL` at the top of
-`netlify/functions/generate.js` (currently `claude-sonnet-4-6`).
+The generator is a deterministic-with-variation engine written into
+`index.html` — it composes Nike-voice briefs from a curated content
+model keyed to the three inputs. It does **not** call an LLM at runtime.
+That's intentional: zero cost, zero accounts, and it can never fail on
+the one click that matters. If you ever want it to call a live model,
+that's a serverless function we can add back later.
 
 ## Notes for Merk
 
-- The Co-Pilot is the moment of the site — deploy with the key set and
-  click Generate a few times before sending to anyone.
+- The Co-Pilot is the moment of the site — click Generate and Regenerate
+  a few times, change the dropdowns, and read the output before sending.
 - Test on mobile — Nike people open links on their phones. Layout stacks
   to one column and the signal feed simplifies on small screens.
 - Don't send it with the placeholder links in `config.js` still in place.
+- Lead with **Founder, Caliber** — that's the strongest credibility line.
 - Consider a privacy-light analytics snippet (Plausible, Fathom) so you
   know if someone from Nike actually opens it.
-- A higher-res hero image would let us go bigger later, but the framed
-  "plate" treatment is deliberate and works at the current resolution.

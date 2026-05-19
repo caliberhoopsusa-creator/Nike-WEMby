@@ -1,19 +1,9 @@
 # Netlify configuration — Project Wemby
-# Static site + one serverless function that proxies the Anthropic API.
+# Fully static site, no build step, no serverless functions.
 
 [build]
   publish = "."
-  functions = "netlify/functions"
-
-[functions]
-  node_bundler = "esbuild"
 
 [dev]
   publish = "."
   port = 8888
-
-# Friendly alias: POST /api/generate → the function
-[[redirects]]
-  from = "/api/generate"
-  to = "/.netlify/functions/generate"
-  status = 200

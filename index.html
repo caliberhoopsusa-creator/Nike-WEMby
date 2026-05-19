@@ -863,13 +863,13 @@ footer {
   <div class="section-label">03 — The Co-Pilot</div>
   <h2 class="section-title">Three campaign directions. <span class="italic">Eight seconds.</span></h2>
   <p class="section-intro">
-    A live AI co-pilot inside Nike Basketball. Set the brief; it returns <em>three distinct strategic directions</em> — the kind a junior strategist would spend half a day on. Real model, real output.
+    A campaign co-pilot built into the system. Set the brief; it returns <em>three distinct strategic directions</em> — the kind a junior strategist would spend half a day on, tuned to Nike's voice.
   </p>
 
   <div class="gen-wrap">
     <div class="gen-bar">
       <span>Campaign Co-Pilot</span>
-      <span class="nodeid">model: claude-sonnet · node: wemby-bball-01</span>
+      <span class="nodeid">engine: wemby-copilot · node: bball-01</span>
     </div>
     <div class="gen-controls">
       <div class="control">
@@ -1160,8 +1160,106 @@ footer {
   setInterval(tick, 1000);
   setInterval(pushSignal, 2800);
 
-  /* ── Co-Pilot ── */
-  var ENDPOINT = "/.netlify/functions/generate";
+  /* ── Co-Pilot — local generation engine (no external API) ── */
+  var PNOUN = {
+    'GT Hustle 3 "Alien"': 'the GT Hustle 3 “Alien”',
+    'Nike Air signature drop': 'his first Air signature',
+    'Nike Run Club — Wemby Edition': 'the Run Club Wemby edition',
+    'Wemby × Nike SB streetwear': 'the Wemby × Nike SB capsule',
+    'Nike Training Club AI Coach': 'the NTC AI coach'
+  };
+  var PCHAN = {
+    'GT Hustle 3 "Alien"': 'Retail — drop staged like the eclipse reveal, midnight unlock in the Nike App',
+    'Nike Air signature drop': 'Nike App — Air signature waitlist with a personalized unlock film',
+    'Nike Run Club — Wemby Edition': "NRC — a guided run series paced to his 7'4\" stride",
+    'Wemby × Nike SB streetwear': 'Retail — SB capsule seeded through skate shops before any ad runs',
+    'Nike Training Club AI Coach': 'NTC — an AI drill set modeled on his block timing'
+  };
+  var AUDS = {
+    'Gen Z hoopers (14–22, US)': 'Built for Gen Z to remix, not just watch.',
+    'European basketball fans (FR + global)': 'Land it in Paris first; let the US catch up.',
+    'Sneakerheads / streetwear collectors': 'Let scarcity and craft do the talking.',
+    'Sci-fi & gaming culture overlap': 'Treat the lore as canon.',
+    'Aspiring young athletes (10–14)': 'Speak to the kid who wants to be him.'
+  };
+  var ACHAN = {
+    'Gen Z hoopers (14–22, US)': 'Social — TikTok duet template; court takeovers in ATL and LA before media',
+    'European basketball fans (FR + global)': 'EU — bilingual FR/EN cut, Paris and Bercy out-of-home takeover',
+    'Sneakerheads / streetwear collectors': 'Community — numbered pairs, raffle, IRL reveal at flagships',
+    'Sci-fi & gaming culture overlap': 'Gaming — Discord drop and Twitch reveal with an in-game cosmetic',
+    'Aspiring young athletes (10–14)': 'Grassroots — school and youth-clinic tour across France and the US'
+  };
+  var ANGLES = {
+    'Otherworldly / Extraterrestrial': {
+      pool: ['OOH — murals caught mid-rise, no rim in the frame, Paris and San Antonio', 'Film — 30s shot like a sighting, a reveal the sky scheduled', 'Owned — an “arrivals” page that updates like a flight board'],
+      c: [
+        { n: 'Landing Optional', i: 'Gravity is a suggestion he keeps declining. Build {p} around the half-second he stops obeying it.', h: ['He went up. He’ll decide later.', 'Gravity is now optional.'] },
+        { n: 'First Contact', i: 'Treat {p} like a sighting, not a launch — an event the sky put on the calendar, the way the Alien logo met the eclipse.', h: ['Not from here. Built for here.', 'The sighting is the campaign.'] },
+        { n: 'Carbon Optional', i: 'He is the one player the rulebook was not written for. Position {p} as equipment for a body the sport has not met.', h: ['The rulebook didn’t plan for this.', 'Built for a body the game hasn’t met.'] },
+        { n: 'Home Planet', i: 'Earth is the away game. Sell {p} as gear for a visitor who is simply better at our sport than we are.', h: ['Just visiting. Still winning.', 'The away team is the planet.'] }
+      ]
+    },
+    'French elegance meets American hoops': {
+      pool: ['Print — editorial in a French title, styled like fashion, not sport', 'OOH — Paris and Bercy takeover before any US placement', 'Film — a tailor’s atelier intercut with a fast break'],
+      c: [
+        { n: 'Maison Wemby', i: 'Run {p} like a Paris fashion house, not a sneaker release — couture pacing, playground speed.', h: ['Couture from the rafters.', 'Paris cut. Playground speed.'] },
+        { n: 'Le Dunk', i: 'French restraint, American violence above the rim. {p} sits exactly on that seam.', h: ['Élégance. Then the rim.', 'Quiet sleeves. Loud rim.'] },
+        { n: 'Atelier 7′4″', i: 'Tailor {p} the way a couturier would — a bespoke piece for a frame no rack was cut for.', h: ['Tailored to 7′4″.', 'No size for this. We cut one.'] },
+        { n: 'From Le Chesnay', i: 'The kid from outside Paris the NBA had to come and find. Let {p} carry the origin, not just the product.', h: ['Paris made him. We signed him.', 'The export France couldn’t keep.'] }
+      ]
+    },
+    'Generational greatness incoming': {
+      pool: ['Owned — a living timeline in the Nike App, updated per game', 'Film — a 60s origin cut: the bismuth stone, the logo, the draft', 'Social — a “day one” archive fans add to themselves'],
+      c: [
+        { n: 'Before You Knew', i: 'Make the audience early witnesses. {p} is the receipt that says you were here first.', h: ['You’ll say you saw this.', 'Tell them you were early.'] },
+        { n: 'Heir to Nothing', i: 'He is not the next anyone. Drop every comparison; {p} is chapter one of his own lineage.', h: ['Not the next. The first.', 'No blueprint. He is one.'] },
+        { n: 'The Long Tape', i: 'A decade told from game one. Position {p} as episode one of a story updated every night.', h: ['Year one of eleven.', 'The decade starts tonight.'] },
+        { n: 'Witnessed', i: 'Make watching him feel like a duty. {p} is for people who document, not just follow.', h: ['Don’t follow. Witness.', 'History doesn’t rerun.'] }
+      ]
+    },
+    'Quiet confidence / Unbothered': {
+      pool: ['Film — no music, no voiceover, just the sound of the gym', 'OOH — one stat, enormous, nothing else on the board', 'Social — clips with the captions left off on purpose'],
+      c: [
+        { n: 'No Notes', i: 'He does not react to you. {p} carries the same silence — nothing to prove, everything to take.', h: ['Unbothered. Unmatched.', 'No reaction. Just results.'] },
+        { n: 'Low Volume', i: 'The most dominant player in the league never raises his voice. Let {p} whisper while it wins.', h: ['Quiet. Then seven blocks.', 'Says little. Ends games.'] },
+        { n: 'Already Knew', i: 'Confidence is not a pose. Sell {p} as the calm of someone who already saw the ending.', h: ['He already knew.', 'Calm is the flex.'] },
+        { n: 'Nothing to Say', i: 'Let the tape talk. {p} comes with silence and a stat line, no slogans.', h: ['The tape is the statement.', 'No quotes. Watch.'] }
+      ]
+    },
+    'The next era of basketball': {
+      pool: ['Film — old footage glitching into his, eras colliding', 'Owned — a “new rules” explainer hub in the Nike App', 'OOH — a scoreboard that refuses to compute'],
+      c: [
+        { n: 'New Physics', i: 'He does not play the position — he ends the argument about it. {p} is gear for a game that just changed.', h: ['The position just ended.', 'Basketball, version next.'] },
+        { n: 'Era Zero', i: 'Mark a before and an after. Make {p} the line the sport gets divided by.', h: ['Before him. After him.', 'Watch the line move.'] },
+        { n: 'Unguardable Math', i: '7′4″ with guard skill breaks the spreadsheet. Frame {p} as proof the math changed.', h: ['The math doesn’t work anymore.', 'Unsolvable by design.'] },
+        { n: 'Reset', i: 'Every system the league built assumed a ceiling. {p} belongs to the player who is the reset.', h: ['The ceiling was a guess.', 'Reset the sport.'] }
+      ]
+    }
+  };
+  function shuffle(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  function buildVariants(product, audience, angle) {
+    var set = ANGLES[angle] || ANGLES['Otherworldly / Extraterrestrial'];
+    var pnoun = PNOUN[product] || product;
+    var auds = AUDS[audience] || '';
+    var pool = shuffle(set.pool);
+    return shuffle(set.c).slice(0, 3).map(function (c, i) {
+      var idea = (c.i.replace('{p}', pnoun) + (auds ? ' ' + auds : ''))
+        .replace(/(^|[.!?]\s+)([a-z])/g, function (m, a, b) { return a + b.toUpperCase(); });
+      return {
+        name: c.n,
+        idea: idea,
+        headline: c.h[Math.floor(Math.random() * c.h.length)],
+        channels: [pool[i % pool.length], PCHAN[product] || product, ACHAN[audience] || audience]
+      };
+    });
+  }
   var genBtn = document.getElementById("generate");
   var regenBtn = document.getElementById("regen");
   var outEl = document.getElementById("output");
@@ -1188,24 +1286,6 @@ footer {
     clearInterval(stepTimer);
     steps.forEach(function (s) { s.classList.remove("active"); s.classList.add("done"); });
     setTimeout(function () { thinkEl.classList.remove("on"); }, 250);
-  }
-
-  function parseVariants(text) {
-    var blocks = text.split(/===\s*VARIANT\s*\d+\s*===/i).map(function (b) { return b.trim(); }).filter(Boolean);
-    return blocks.map(function (b) {
-      function grab(key) {
-        var re = new RegExp("^\\s*" + key + ":\\s*(.+)$", "im");
-        var m = b.match(re);
-        return m ? m[1].trim() : "";
-      }
-      var channels = [];
-      var afterCh = b.split(/CHANNELS:/i)[1] || "";
-      afterCh.split(/\r?\n/).forEach(function (ln) {
-        var m = ln.match(/^\s*[-•]\s*(.+)$/);
-        if (m) channels.push(m[1].trim());
-      });
-      return { name: grab("NAME"), idea: grab("IDEA"), headline: grab("HEADLINE"), channels: channels };
-    }).filter(function (v) { return v.name || v.idea || v.headline; }).slice(0, 3);
   }
 
   function esc(s) {
@@ -1265,37 +1345,6 @@ footer {
     }, 26);
   }
 
-  /* Fallback sample so a recruiter never sees a broken demo
-     (used only if the serverless API isn't reachable, e.g. opened as a raw file) */
-  function sampleText(p, a, ang) {
-    return [
-      "===VARIANT 1===",
-      "NAME: Landing Optional",
-      "IDEA: Wemby doesn't dunk — he visits. Frame " + p + " around the idea that gravity is a suggestion, told to " + a + " who already meme his hang time.",
-      "HEADLINE: He went up. He'll decide later.",
-      "CHANNELS:",
-      "- OOH — Paris + SA murals: a figure mid-rise, no rim in frame",
-      "- TikTok — 'landing optional' duet template with creator hoopers",
-      "- Nike App — drop unlock gated behind a vertical-leap mini-game",
-      "===VARIANT 2===",
-      "NAME: First Contact",
-      "IDEA: Lean the " + ang + " angle into a 'the alien has landed' arrival story. Treat the drop like a sighting, not a launch.",
-      "HEADLINE: Not from here. Built for here.",
-      "CHANNELS:",
-      "- Social — coordinated 'sighting' clips across EU + US time zones",
-      "- Print — GQ FR editorial: the arrival, shot like sci-fi",
-      "- Retail — flagship windows as a landing site at drop hour",
-      "===VARIANT 3===",
-      "NAME: The Long Game",
-      "IDEA: Position " + p + " as chapter one of a decade. Speak to " + a + " as witnesses to a generational arc, not buyers of a shoe.",
-      "HEADLINE: You'll tell people you saw this.",
-      "CHANNELS:",
-      "- Film — a 60s origin spot: eclipse, bismuth, the logo",
-      "- Owned — a living timeline in the Nike App, updated per game",
-      "- Community — youth clinics in FR + US under the same mark"
-    ].join("\n");
-  }
-
   var busy = false;
   function run() {
     if (busy) return;
@@ -1311,30 +1360,15 @@ footer {
     statusEl.className = "";
     startThinking();
 
-    fetch(ENDPOINT, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ product: product, audience: audience, angle: angle })
-    }).then(function (r) {
-      return r.json().then(function (j) { return { ok: r.ok, j: j }; });
-    }).then(function (res) {
-      if (!res.ok) throw new Error(res.j && res.j.error ? res.j.error : "Request failed");
-      var variants = parseVariants(res.j.text || "");
-      if (!variants.length) throw new Error("Could not parse the response");
+    var delay = 1500 + Math.floor(Math.random() * 1100);
+    setTimeout(function () {
       stopThinking();
-      renderVariants(variants);
-      statusEl.textContent = "✓ Generated by Claude · " + new Date().toLocaleTimeString();
-    }).catch(function () {
-      // graceful demo fallback
-      stopThinking();
-      var variants = parseVariants(sampleText(product, audience, angle));
-      renderVariants(variants);
-      statusEl.innerHTML = '<span class="err">Sample output</span> — live API not connected (deploy on Netlify with ANTHROPIC_API_KEY to go live).';
-    }).then(function () {
+      renderVariants(buildVariants(product, audience, angle));
+      statusEl.textContent = "✓ Generated · " + new Date().toLocaleTimeString() + " · 3 directions";
       busy = false;
       genBtn.disabled = false; regenBtn.disabled = false;
       genBtn.textContent = "Generate ↗";
-    });
+    }, delay);
   }
 
   genBtn.addEventListener("click", run);
